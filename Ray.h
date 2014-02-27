@@ -1,5 +1,81 @@
 #include <stdlib.h>
 #include <math.h>
+class Vector
+{
+	float x;
+	float y;
+	float z;
+
+public:
+	Vector::Vector(float a = 0, float b = 0, float c = 0) {
+		x = a;
+		y = b;
+		z = c;
+	}
+
+	float* getDir() {
+		float* result = (float *) malloc(3*sizeof(float));
+		result[0] = x;
+		result[1] = y;
+		result[2] = z;
+		return result;
+	}
+
+	Vector Vadd(Vector add) {
+		float* C = add.getDir();
+		Vector result = Vector(x + C[0], y + C[1], z + C[2]);
+		free(C);
+		return result;
+	}
+
+	Vector Vsub(Vector sub) {
+		float* C = sub.getDir();
+		Vector result = Vector(x - C[0], y - C[1], z - C[2]);
+		free(C);
+		return result;
+	}
+
+	Vector Vsca(float scale) {
+		Vector result = Vector(x * scale, y * scale, z * scale);
+		return result;
+	}
+
+	Vector Vdiv(float scale) {
+		Vector result = Vector(x / scale, y / scale, z / scale);
+		return result;
+	}
+
+	Vector Vsqa() {
+		Vector result = Vector(x * x, y * y, z * z);
+		return result;
+	}
+
+	Vector Vsqr() {
+		Vector result = Vector(sqrt(x), sqrt(y), sqrt(z));
+		return result;
+	}
+
+	Vector Vnor() {
+		float norm = sqrt(pow(x, 2) + pow(y,2) + pow(z,2));
+		Vector result = Vector(x / norm, y / norm, z / norm);
+		return result;
+	}
+
+	Vector Vcrs(Vector cross) {
+		float* C = cross.getDir();
+		Vector result = Vector((y * C[2]) - (z * C[1]), (z * C[0]) - (x * C[2]), (x * C[1]) - (y * C[0]));
+		free(C);
+		return result;
+	}
+
+	float Vdot(Vector dot) {
+		float* C = dot.getDir();
+		float result = (x * C[0]) + (y * C[1]) + (z * C[2]);
+		free(C);
+		return result;
+	}
+};
+
 class Point
 {
 public:
@@ -35,82 +111,6 @@ public:
 	}
 };
 
-class Vector
-{
-	float x;
-	float y;
-	float z;
-
-public:
-	Vector::Vector(float a = 0, float b = 0, float c = 0) {
-		x = a;
-		y = b;
-		z = c;
-	}
-
-	float* Vector::getDir() {
-		float* result = (float *) malloc(3*sizeof(float));
-		result[0] = x;
-		result[1] = y;
-		result[2] = z;
-		return result;
-	}
-
-	Vector Vector::Vadd(Vector add) {
-		float* C = add.getDir();
-		Vector result = Vector(x + C[0], y + C[1], z + C[2]);
-		free(C);
-		return result;
-	}
-
-	Vector Vector::Vsub(Vector sub) {
-		float* C = sub.getDir();
-		Vector result = Vector(x - C[0], y - C[1], z - C[2]);
-		free(C);
-		return result;
-	}
-
-	Vector Vector::Vsca(float scale) {
-		Vector result = Vector(x * scale, y * scale, z * scale);
-		return result;
-	}
-
-	Vector Vector::Vdiv(float scale) {
-		Vector result = Vector(x / scale, y / scale, z / scale);
-		return result;
-	}
-
-	Vector Vector::Vsqa() {
-		Vector result = Vector(x * x, y * y, z * z);
-		return result;
-	}
-
-	Vector Vector::Vsqr() {
-		Vector result = Vector(sqrt(x), sqrt(y), sqrt(z));
-		return result;
-	}
-
-	Vector Vector::Vnor() {
-		float norm = sqrt(pow(x, 2) + pow(y,2) + pow(z,2));
-		Vector result = Vector(x / norm, y / norm, z / norm);
-		return result;
-	}
-
-	Vector Vector::Vcrs(Vector cross) {
-		float* C = cross.getDir();
-		Vector result = Vector((y * C[2]) - (z * C[1]), (z * C[0]) - (x * C[2]), (x * C[1]) - (y * C[0]));
-		free(C);
-		return result;
-	}
-
-	float Vector::Vdot(Vector dot) {
-		float* C = dot.getDir();
-		float result = (x * C[0]) + (y * C[1]) + (z * C[2]);
-		free(C);
-		return result;
-	}
-};
-
 class Light
 {
 	Point position;
@@ -129,7 +129,7 @@ public:
 			Vector result = Vector(position.x, position.y, position.z);
 			return result;
 		}
-		Vector result = pointSub(point.x, point.y, point.z, position.x, position.y, position.z);
+		Vector result = point.subP(position);
 		return result;
 	}
 };
@@ -168,9 +168,4 @@ public:
 		return result;
 	}
 };
-
-Vector pointSub(float a, float b, float c, float d, float e, float f) {
-	Vector result = Vector(d - a, e - b, f - c);
-	return result;
-}
 

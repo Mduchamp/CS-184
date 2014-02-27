@@ -1,6 +1,5 @@
-#include <stdlib.h>
-#include <math.h>
 #include "Ray.h"
+
 class Shape 
 {
 public:
@@ -11,7 +10,6 @@ public:
 	float maxy;
 	float maxz;
 	bool Shape::hitMe(Ray ray);
-	Box Shape::registerBox();
 };
 
 class Box : public Shape 
