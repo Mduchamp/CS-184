@@ -101,6 +101,11 @@ public:
 		free(C);
 		return result;
 	}
+
+	float getMag() {
+		return sqrt(x*x + y*y + z*z);
+	}
+
 };
 
 class Color
@@ -164,9 +169,13 @@ public:
 		mint = min;
 	}
 
+	float getMag(){
+		return direction.getMag();
+	}
+
 	Vector getPos() {
 		float* C = origin.getCoors();
-		Vector result = Vector(C[0], C[1], C[2]);
+		Vector result = Vector(C[0], C[1], C[2]); //why are you making a new vector? o.0
 		return result;
 	}
 
@@ -184,4 +193,3 @@ public:
 		return result;
 	}
 };
-
