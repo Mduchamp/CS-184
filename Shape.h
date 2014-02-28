@@ -25,8 +25,10 @@ public:
 	}
 
 	bool hitMe(Ray ray) {
-		Point pos = ray.getPos();
-		if(pos.x <= maxx && pos.x >= minx && pos.y <= maxy && pos.y >= miny && pos.z <= maxz && pos.z >= minz) {
+		Vector pos = ray.getPos();
+		float* C = pos.getCoors();
+		if(C[0] <= maxx && C[0] >= minx && C[1] <= maxy && C[1] >= miny && C[2] <= maxz && C[2] >= minz) {
+			free(C);
 			return true;
 		}
 		
@@ -35,28 +37,32 @@ public:
 
 class Sphere : public Shape
 {
-	Point center;
+	Vector center;
 	float radius;
-	Sphere::Sphere(Point cent, float rad) {
+	Sphere::Sphere(Vector cent, float rad) {
 		center = cent;
 		radius = rad;
-		minx = center.x - radius;
-		miny = center.y - radius;
-		minz = center.z - radius;
-		maxx = center.x + radius;
-		maxy = center.y + radius;
-		maxz = center.z + radius;
+		float* C = cent.getCoors();
+		minx = C[0] - radius;
+		miny = C[1] - radius;
+		minz = C[2] - radius;
+		maxx = C[0] + radius;
+		maxy = C[1] + radius;
+		maxz = C[2] + radius;
+		free(C);
 	}
 
 	Sphere::Sphere(float* cent, float rad) {
-		center = Point(cent[0], cent[1], cent[2]);
+		center = Vector(cent[0], cent[1], cent[2]);
 		radius = rad;
-		minx = center.x - radius;
-		miny = center.y - radius;
-		minz = center.z - radius;
-		maxx = center.x + radius;
-		maxy = center.y + radius;
-		maxz = center.z + radius;
+		float* C = center.getCoors();
+		minx = C[0] - radius;
+		miny = C[1] - radius;
+		minz = C[2] - radius;
+		maxx = C[0] + radius;
+		maxy = C[1] + radius;
+		maxz = C[2] + radius;
+		free(C);
 	}
 
 	bool hitMe(Ray ray) {
@@ -86,7 +92,7 @@ class Sphere : public Shape
 
 class Triangle : public Shape
 {
-	Triangle::Triangle(Point vertex1, Point vertex2, Point vertex3) {
+	Triangle::Triangle(Vector vertex1, Vector vertex2, Vector vertex3) {
 
 	}
 };

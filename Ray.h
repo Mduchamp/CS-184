@@ -13,7 +13,7 @@ public:
 		z = c;
 	}
 
-	float* getDir() {
+	float* getCoors() {
 		float* result = (float *) malloc(3*sizeof(float));
 		result[0] = x;
 		result[1] = y;
@@ -22,14 +22,14 @@ public:
 	}
 
 	Vector Vadd(Vector add) {
-		float* C = add.getDir();
+		float* C = add.getCoors();
 		Vector result = Vector(x + C[0], y + C[1], z + C[2]);
 		free(C);
 		return result;
 	}
 
 	Vector Vsub(Vector sub) {
-		float* C = sub.getDir();
+		float* C = sub.getCoors();
 		Vector result = Vector(x - C[0], y - C[1], z - C[2]);
 		free(C);
 		return result;
@@ -62,37 +62,16 @@ public:
 	}
 
 	Vector Vcrs(Vector cross) {
-		float* C = cross.getDir();
+		float* C = cross.getCoors();
 		Vector result = Vector((y * C[2]) - (z * C[1]), (z * C[0]) - (x * C[2]), (x * C[1]) - (y * C[0]));
 		free(C);
 		return result;
 	}
 
 	float Vdot(Vector dot) {
-		float* C = dot.getDir();
+		float* C = dot.getCoors();
 		float result = (x * C[0]) + (y * C[1]) + (z * C[2]);
 		free(C);
-		return result;
-	}
-};
-
-class Point
-{
-public:
-	float x;
-	float y;
-	float z;
-
-	Point::Point(float a = 0, float b = 0, float c = 0) {
-		x = a;
-		y = b;
-		z = c;
-	}
-
-	Vector Point::subP(Point sub) {
-		Vector B = Vector(x, y, z);
-		Vector A = Vector(sub.x, sub.y, sub.z);
-		Vector result = B.Vsub(A);
 		return result;
 	}
 };
@@ -113,49 +92,59 @@ public:
 
 class Light
 {
-	Point position;
+	Vector position;
 	Color color;
 	bool type;
 
 public:
 	Light::Light(float a = 0, float b = 0, float c = 0, float d = 0, float e = 0, float f = 0, bool direct = false) {
-		position = Point(a, b, c);
+		position = Vector(a, b, c);
 		color = Color(d, e, f);
 		type = direct;
 	}
 
-	Vector Light::lightVector(Point point) {
+	Vector Light::lightVector(Vector point) {
 		if(type) {
-			Vector result = Vector(position.x, position.y, position.z);
+			float* coors = position.getCoors();
+			Vector result = Vector(coors[0], coors[1], coors[2]);
+			free(coors);
 			return result;
 		}
-		Vector result = point.subP(position);
+		Vector result = point.Vsub(position);
 		return result;
 	}
 };
 
 class Ray
 {
-	Point origin;
+	Vector origin;
 	Vector direction;
 	float mint;
 	float maxt;
 
 public:
-	Ray::Ray(float x, float y, float z, Vector dir, float max = 100000, float min = 0) {
-		origin = Point(x, y, z);
+	Ray::Ray(float x, float y, float z, Vector dir, float max = 1000, float min = 0) {
+		origin = Vector(x, y, z);
 		direction = dir;
 		maxt = max;
 		mint = min;
 	}
 
-	Point getPos() {
-		Point result = Point(origin.x, origin.y, origin.z);
+	Ray::Ray(Vector ori, Vector dir, float max = 1000, float min = 0) {
+		origin = ori;
+		direction = dir;
+		maxt = max;
+		mint = min;
+	}
+
+	Vector getPos() {
+		float* C = origin.getCoors();
+		Vector result = Vector(C[0], C[1], C[2]);
 		return result;
 	}
 
 	Vector getDir() {
-		float* C = direction.getDir();
+		float* C = direction.getCoors();
 		Vector result = Vector(C[0], C[1], C[2]);
 		free(C);
 		return result;
