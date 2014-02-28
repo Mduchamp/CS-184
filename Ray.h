@@ -21,6 +21,25 @@ public:
 		return result;
 	}
 
+	Vector Vector::operator+(Vector other) {
+		float* C = other.getCoors();
+		Vector result = Vector(x + C[0], y + C[1], z + C[2]);
+		free(C);
+		return result;
+	}
+
+	Vector Vector::operator-(Vector other) {
+		float* C = other.getCoors();
+		Vector result = Vector(x - C[0], y - C[1], z - C[2]);
+		free(C);
+		return result;
+	}
+
+	Vector Vector::operator*(float scale) {
+		return Vector(x*scale, y*scale, z*scale);
+
+	}
+
 	Vector Vadd(Vector add) {
 		float* C = add.getCoors();
 		Vector result = Vector(x + C[0], y + C[1], z + C[2]);
