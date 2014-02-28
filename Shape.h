@@ -88,6 +88,12 @@ class Sphere : public Shape
 		Box myBox = Box(minx, miny, minz, maxx, maxy, maxz);
 		return myBox;
 	}
+
+	bool hit(Ray ray)
+	{
+		
+
+	}
 };
 
 class Triangle : public Shape
