@@ -93,6 +93,14 @@ public:
 		free(C);
 		return result;
 	}
+
+	float getDistance(Vector v) {
+		float* C = v.getCoors();
+		float result = (x - C[0]) * (x - C[0]) + (y - C[1])*(y - C[1])  + (z - C[2])*(z - C[2]);
+		result = sqrt (result);
+		free(C);
+		return result;
+	}
 };
 
 class Color

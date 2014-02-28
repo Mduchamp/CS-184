@@ -91,7 +91,10 @@ class Sphere : public Shape
 
 	bool hit(Ray ray)
 	{
+		//first do box test
 		
+
+		//then do specific test
 
 	}
 };
