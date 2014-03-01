@@ -176,6 +176,7 @@ public:
 	Vector getPos() {
 		float* C = origin.getCoors();
 		Vector result = Vector(C[0], C[1], C[2]); //why are you making a new vector? o.0
+		//because returning the origin would let other pieces of code edit the actual origin of the ray, they can't because this is a copy
 		return result;
 	}
 

@@ -93,10 +93,10 @@ class Sphere : public Shape
 	{
 		//first do general test --> realized that we don't need box, just need a distance formula
 		Vector rayPosition = ray.getPos();
-		float distance = origin.getDistance(rayPostion);
+		float distance = center.getDistance(rayPosition);
 		float scalar = distance / (ray.getDir().getMag());
 		Vector extended = ray.getPos() + ray.getDir() * scalar;
-		float compare = extended.getDistance(origin);
+		float compare = extended.getDistance(center);
 		if (compare > radius)
 			return false;
 		//then do specific test --> we gotta optimized this :(
