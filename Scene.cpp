@@ -1,4 +1,5 @@
 #include "Shape.h"
+#include "Ray.h"
 #include <stdio.h>
 
 float width = 100, height = 100;

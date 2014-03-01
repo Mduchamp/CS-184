@@ -1,5 +1,14 @@
 #include <stdlib.h>
 #include <math.h>
+
+#ifndef VECTOR_H
+#define VECTOR_H
+#ifndef LIGHT_H
+#define LIGHT_H
+#ifndef RAY_H
+#define RAY_H
+
+
 class Vector
 {
 	float x;
@@ -193,3 +202,6 @@ public:
 		return result;
 	}
 };
+#endif
+#endif
+#endif

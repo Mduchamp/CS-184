@@ -88,20 +88,20 @@ class Sphere : public Shape
 		Box myBox = Box(minx, miny, minz, maxx, maxy, maxz);
 		return myBox;
 	}
-
+/*
 	bool hit(Ray ray)
 	{
-		//first do general test --> realized that we don't need box, just need a distance formula
 		Vector rayPosition = ray.getPos();
-		float distance = origin.getDistance(rayPostion);
+		float distance = origin.getDistance(rayPostion) - radius;
 		float scalar = distance / (ray.getDir().getMag());
 		Vector extended = ray.getPos() + ray.getDir() * scalar;
 		float compare = extended.getDistance(origin);
-		if (compare > radius)
-			return false;
-		//then do specific test --> we gotta optimized this :(
-		
-	}
+		if (compare - radius.getMag() <= 0.001)
+		{
+			return true;
+		}
+		return false;
+	} */
 };
 
 class Triangle : public Shape
