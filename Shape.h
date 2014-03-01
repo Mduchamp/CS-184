@@ -88,11 +88,11 @@ class Sphere : public Shape
 		Box myBox = Box(minx, miny, minz, maxx, maxy, maxz);
 		return myBox;
 	}
-/*
+
 	bool hit(Ray ray)
 	{
 		Vector rayPosition = ray.getPos();
-		float distance = origin.getDistance(rayPostion) - radius;
+		float distance = center.getDistance(rayPosition);
 		float scalar = distance / (ray.getDir().getMag());
 		Vector extended = ray.getPos() + ray.getDir() * scalar;
 		float compare = extended.getDistance(origin);
@@ -101,7 +101,7 @@ class Sphere : public Shape
 			return true;
 		}
 		return false;
-	} */
+	}
 };
 
 class Triangle : public Shape
