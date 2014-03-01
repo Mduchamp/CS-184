@@ -1,14 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#ifndef VECTOR_H
-#define VECTOR_H
-#ifndef LIGHT_H
-#define LIGHT_H
-#ifndef RAY_H
-#define RAY_H
-
-
 class Vector
 {
 	float x;
@@ -16,7 +8,7 @@ class Vector
 	float z;
 
 public:
-	Vector::Vector(float a = 0, float b = 0, float c = 0) {
+	Vector(float a = 0, float b = 0, float c = 0) {
 		x = a;
 		y = b;
 		z = c;
@@ -30,21 +22,21 @@ public:
 		return result;
 	}
 
-	Vector Vector::operator+(Vector other) {
+	Vector operator+(Vector other) {
 		float* C = other.getCoors();
 		Vector result = Vector(x + C[0], y + C[1], z + C[2]);
 		free(C);
 		return result;
 	}
 
-	Vector Vector::operator-(Vector other) {
+	Vector operator-(Vector other) {
 		float* C = other.getCoors();
 		Vector result = Vector(x - C[0], y - C[1], z - C[2]);
 		free(C);
 		return result;
 	}
 
-	Vector Vector::operator*(float scale) {
+	Vector operator*(float scale) {
 		return Vector(x*scale, y*scale, z*scale);
 
 	}
@@ -112,7 +104,7 @@ public:
 	}
 
 	float getMag() {
-		return sqrt(x*x + y*y + z*z);
+		return (float)sqrt(x*x + y*y + z*z);
 	}
 
 };
@@ -124,7 +116,7 @@ public:
 	float g;
 	float b;
 
-	Color::Color(float x = 0, float y = 0, float z = 0) {
+	Color(float x = 0, float y = 0, float z = 0) {
 		r = x;
 		g = y;
 		b = z;
@@ -138,13 +130,13 @@ class Light
 	bool type;
 
 public:
-	Light::Light(float a = 0, float b = 0, float c = 0, float d = 0, float e = 0, float f = 0, bool direct = false) {
+	Light(float a = 0, float b = 0, float c = 0, float d = 0, float e = 0, float f = 0, bool direct = false) {
 		position = Vector(a, b, c);
 		color = Color(d, e, f);
 		type = direct;
 	}
 
-	Vector Light::lightVector(Vector point) {
+	Vector lightVector(Vector point) {
 		if(type) {
 			float* coors = position.getCoors();
 			Vector result = Vector(coors[0], coors[1], coors[2]);
@@ -164,14 +156,14 @@ class Ray
 	float maxt;
 
 public:
-	Ray::Ray(float x, float y, float z, Vector dir, float max = 1000, float min = 0) {
+	Ray(float x, float y, float z, Vector dir, float max = 1000, float min = 0) {
 		origin = Vector(x, y, z);
 		direction = dir;
 		maxt = max;
 		mint = min;
 	}
 
-	Ray::Ray(Vector ori, Vector dir, float max = 1000, float min = 0) {
+	Ray(Vector ori, Vector dir, float max = 1000, float min = 0) {
 		origin = ori;
 		direction = dir;
 		maxt = max;
@@ -203,6 +195,3 @@ public:
 		return result;
 	}
 };
-#endif
-#endif
-#endif

@@ -9,13 +9,13 @@ public:
 	float maxx;
 	float maxy;
 	float maxz;
-	bool Shape::hitMe(Ray ray);
+	bool hitMe(Ray ray);
 };
 
 class Box : public Shape 
 {
 public:
-	Box::Box(float lx, float ly, float lz, float hx, float hy, float hz) {
+	Box(float lx, float ly, float lz, float hx, float hy, float hz) {
 		minx = lx;
 		miny = ly;
 		minz = lz;
@@ -35,11 +35,12 @@ public:
 	}
 };
 
-class Sphere : public Shape
+class Sphere : public Shape 
 {
 	Vector center;
 	float radius;
-	Sphere::Sphere(Vector cent, float rad) {
+public:
+	Sphere(Vector cent, float rad) {
 		center = cent;
 		radius = rad;
 		float* C = cent.getCoors();
@@ -52,7 +53,7 @@ class Sphere : public Shape
 		free(C);
 	}
 
-	Sphere::Sphere(float* cent, float rad) {
+	Sphere(float* cent, float rad) {
 		center = Vector(cent[0], cent[1], cent[2]);
 		radius = rad;
 		float* C = center.getCoors();
@@ -63,25 +64,6 @@ class Sphere : public Shape
 		maxy = C[1] + radius;
 		maxz = C[2] + radius;
 		free(C);
-	}
-
-	bool hitMe(Ray ray) {
-		/*Point s = ray.getPos();
-		Vector v = s.subP(center);
-		Vector d = ray.getDir();
-		float vd = v.Vdot(d);
-		Vector v2 = v.Vsqa();
-		float* va = v2.getDir();
-		float va1 = va[0] - pow(radius, 2);
-		float va2 = va[1] - pow(radius, 2);
-		float va3 = va[2] - pow(radius, 2);
-		float vd1 = vd - va1;
-		float vd2 = vd - va2;
-		float vd3 = vd - va3;
-		if(vd1 < 0 || vd2 < 0 || vd3 < 0) {
-			return false;
-		}
-		float vdp1 = sqrt(vd1);*/
 	}
 
 	Box registerBox() {
@@ -95,8 +77,8 @@ class Sphere : public Shape
 		float distance = center.getDistance(rayPosition);
 		float scalar = distance / (ray.getDir().getMag());
 		Vector extended = ray.getPos() + ray.getDir() * scalar;
-		float compare = extended.getDistance(origin);
-		if (compare - radius.getMag() <= 0.001)
+		float compare = extended.getDistance(center);
+		if (compare - radius <= 0.001)
 		{
 			return true;
 		}
@@ -106,7 +88,7 @@ class Sphere : public Shape
 
 class Triangle : public Shape
 {
-	Triangle::Triangle(Vector vertex1, Vector vertex2, Vector vertex3) {
+	Triangle(Vector vertex1, Vector vertex2, Vector vertex3) {
 
 	}
 };

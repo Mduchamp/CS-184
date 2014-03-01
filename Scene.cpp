@@ -1,5 +1,5 @@
 #include "Shape.h"
-#include "Ray.h"
+//#include "Ray.h"
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
@@ -60,8 +60,19 @@ public:
 	}
 };
 
+void hit_test()
+{
+	float foo [3] = {0, 0 ,0};
+	Vector g = Vector(0, 0, 0);
+	Sphere k = Sphere(foo,1.0);
+	
+	
+
+}
+
 int main(int argc, char** argv)
 {
+	hit_test();
 	float zpf = 0.5; //primitive is double, causes problems
 	Camera cam = Camera();
 	cam.eye = Vector(0, 0, 0);
