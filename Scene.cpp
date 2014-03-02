@@ -59,16 +59,22 @@ public:
 	}
 };
 
+
+//THE TESTSSSSSSS
 void hittest()
 {
-	Ray ray = Ray(10, 0 , 0, Vector(-1, 0, 0));
+	Ray ray = Ray(1000, 0 , 0, Vector(-0.9, 0.0000, 0));
 	Sphere sphere = Sphere(Vector(0, 0, 0), 1.0);
-	std::cout << sphere.hit(ray);
+	std::cout << sphere.hit(ray) << std::endl;
+	std::cout << "\n" << std::endl;
 }
+
+//THE TESTSSSSSSS
 
 int main(int argc, char** argv)
 {
 	//hittest();
+	Color color;
 	float zpf = 0.5; //primitive is double, causes problems
 	Camera cam = Camera();
 	cam.eye = Vector(0, 0, 0);
@@ -77,15 +83,26 @@ int main(int argc, char** argv)
 	LL = Vector(-1, -1, 1);
 	LR = Vector(1, -1, 1);
 	Image screen = Image(width, height);
+
+	Sphere sphere = Sphere(Vector(0, 0, 10), 0.2);
+	
 	for(float k = 0; k < height; k++) {
 		for(float i = 0; i < width; i++) {
 			float u = (i + zpf) / width;
 			float v = (k + zpf) / height;
 			//Vector dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
 			Vector dir = (((UR * v) + (UL * (1 - v)) * u) + (LR * v) + (LL * (1 - v)) * (1 - u) - cam.eye).Vnor();
+			//std::cout << dir.x;
 			Ray ray = Ray(cam.eye, dir);
 			//Color color = Raytracer(ray);
-			Color color = Color(0, 0, 1); //comment me out when raytracer exists and gives color
+			if (sphere.hit(ray))
+			{
+				color = Color(1, 1, 1);	
+			}
+			else
+			{
+				color = Color(0, 0, 0);
+			}
 			if(!screen.setPixel(k, i, color)) {
 				printf("There was a problem!\n");
 			}

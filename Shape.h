@@ -1,4 +1,6 @@
 #include "Ray.h"
+#include <stdio.h>
+#include <iostream>
 
 class Shape 
 {
@@ -12,7 +14,7 @@ public:
 	bool hitMe(Ray ray);
 };
 
-class Box : public Shape 
+class Box : public Shape
 {
 public:
 	Box(float lx, float ly, float lz, float hx, float hy, float hz) {
@@ -76,13 +78,25 @@ public:
 		Vector rayPosition = ray.getPos();
 		float distance = center.getDistance(rayPosition);
 		float scalar = distance / (ray.getDir().getMag());
-		Vector extended = ray.getPos() + ray.getDir() * scalar;
-		float compare = extended.getDistance(center);
-		if (compare - radius <= 0.001)
+		Vector extended = rayPosition + ray.getDir() * scalar;
+		Vector separation = extended - center;
+		float *sep = separation.getCoors();
+		float mysum = 0;
+		int i;
+		for (i = 0; i < 3; i++)
 		{
-			return true;
+			if (abs(sep[i]) > 1.001)
+			{
+				return false;
+			}
+			mysum += (sep[i] * sep[i]);
 		}
-		return false;
+		//std::cout << sqrt(mysum) << std::endl;
+		if (abs(sqrt(mysum) - radius) >= 0.001)
+		{
+			return false;
+		}
+		return true;
 	}
 };
 
