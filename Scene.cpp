@@ -59,8 +59,16 @@ public:
 	}
 };
 
+void hittest()
+{
+	Ray ray = Ray(10, 0 , 0, Vector(-1, 0, 0));
+	Sphere sphere = Sphere(Vector(0, 0, 0), 1.0);
+	std::cout << sphere.hit(ray);
+}
+
 int main(int argc, char** argv)
 {
+	//hittest();
 	float zpf = 0.5; //primitive is double, causes problems
 	Camera cam = Camera();
 	cam.eye = Vector(0, 0, 0);
