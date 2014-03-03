@@ -73,30 +73,56 @@ public:
 		return myBox;
 	}
 
-	bool hit(Ray ray)
+	bool hit(Ray k)
 	{
-		Vector rayPosition = ray.getPos();
-		float distance = center.getDistance(rayPosition);
-		float scalar = distance / (ray.getDir().getMag());
-		Vector extended = rayPosition + ray.getDir() * scalar;
-		Vector separation = extended - center;
-		float *sep = separation.getCoors();
-		float mysum = 0;
-		int i;
-		for (i = 0; i < 3; i++)
-		{
-			if (abs(sep[i]) > 1.001)
-			{
-				return false;
-			}
-			mysum += (sep[i] * sep[i]);
-		}
-		//std::cout << sqrt(mysum) << std::endl;
-		if (abs(sqrt(mysum) - radius) >= 0.001)
+		//transform ray into object space
+		Ray ray = Ray(Vector(0, 0, -2), k.getDir());
+		
+		//shirly check
+		float a = ray.getDir().Vdot(ray.getDir());
+		float b = 2 * (ray.getDir().Vdot(ray.getPos()));
+    	float c = ray.getPos().Vdot(ray.getPos()) - radius * radius;
+    	float discriminant = b * b - 4 * a * c;
+
+    	//std::cout << discriminant;
+    	//std::cout << "\n";
+		
+		if (discriminant < 0)
 		{
 			return false;
 		}
-		return true;
+		float d_root = sqrtf(discriminant);
+		float temp;
+		if (b < 0)
+		{
+			temp = (-b - d_root)/2.0;
+		}
+		else
+		{
+			temp = (-b + d_root)/2.0;
+		}
+		float t0 = temp / a;
+    	float t1 = c / temp;
+    	if (t0 > t1)
+    	{
+        	// if t0 is bigger than t1 swap them around
+        	float counter = t0;
+        	t0 = t1;
+        	t1 = counter;
+    	}
+		if (t1 < 0)
+        	return false;
+        // if t0 is less than zero, the intersection point is at t1
+    	if (t0 < 0)
+    	{
+        	//t = t1;
+        	return true;
+    	}
+    	else
+    	{
+        	//t = t0;
+        	return true;
+    	}
 	}
 };
 
@@ -106,4 +132,3 @@ class Triangle : public Shape
 
 	}
 };
-

@@ -78,13 +78,13 @@ int main(int argc, char** argv)
 	float zpf = 0.5; //primitive is double, causes problems
 	Camera cam = Camera();
 	cam.eye = Vector(0, 0, 0);
-	UL = Vector(-1, 1, 1);
-	UR = Vector(1, 1, 1);
-	LL = Vector(-1, -1, 1);
-	LR = Vector(1, -1, 1);
+	UL  = Vector(-1,  1, -1);
+	UR  = Vector( 1,  1, -1);
+	LR  = Vector( 1, -1, -1);
+	LL  = Vector(-1, -1, -1);
 	Image screen = Image(width, height);
 
-	Sphere sphere = Sphere(Vector(0, 0, 10), 0.2);
+	Sphere sphere = Sphere(Vector(0, 0, -2), 0.5);
 	
 	for(float k = 0; k < height; k++) {
 		for(float i = 0; i < width; i++) {
@@ -97,7 +97,7 @@ int main(int argc, char** argv)
 			//Color color = Raytracer(ray);
 			if (sphere.hit(ray))
 			{
-				color = Color(1, 1, 1);	
+				color = Color(1, 1, 0);	
 			}
 			else
 			{
