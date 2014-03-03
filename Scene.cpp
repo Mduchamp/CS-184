@@ -78,14 +78,15 @@ int main(int argc, char** argv)
 	float zpf = 0.5; //primitive is double, causes problems
 	Camera cam = Camera();
 	cam.eye = Vector(0, 0, 0);
-	UL  = Vector(-1,  1, -1);
-	UR  = Vector( 1,  1, -1);
-	LR  = Vector( 1, -1, -1);
-	LL  = Vector(-1, -1, -1);
+	UL  = Vector(-1,  1, 1);
+	UR  = Vector( 1,  1, 1);
+	LR  = Vector( 1, -1, 1);
+	LL  = Vector(-1, -1, 1);
 	Image screen = Image(width, height);
 
-	Sphere sphere = Sphere(Vector(0, 0, -2), 0.5);
-	
+	//Sphere sphere = Sphere(Vector(0, 0, -2), 0.5);
+	Triangle triangle = Triangle (Vector (0,1,3), Vector(1,0, 3), Vector(-1, 0, 3));
+
 	for(float k = 0; k < height; k++) {
 		for(float i = 0; i < width; i++) {
 			float u = (i + zpf) / width;
@@ -94,8 +95,9 @@ int main(int argc, char** argv)
 			Vector dir = (((UR * v) + (UL * (1 - v)) * u) + (LR * v) + (LL * (1 - v)) * (1 - u) - cam.eye).Vnor();
 			//std::cout << dir.x;
 			Ray ray = Ray(cam.eye, dir);
+			Vector intersect = Vector(0, 0, 0);
 			//Color color = Raytracer(ray);
-			if (sphere.hit(ray))
+			if (triangle.hit(ray, &intersect))
 			{
 				color = Color(1, 1, 0);	
 			}
