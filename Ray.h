@@ -194,3 +194,24 @@ public:
 		return result;
 	}
 };
+
+class PoI
+{
+	Vector collision;
+	Vector normal;
+public:
+	PoI(Vector c, Vector n) {
+		collision = c;
+		normal = n;
+	}
+
+	void setCollision(Vector c)
+	{
+		collision = c;
+	}
+
+	void setNormal(Vector n)
+	{
+		normal = n;
+	}
+};
