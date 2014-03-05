@@ -64,6 +64,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Raytracer.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Ray.h" />
   </ItemGroup>
