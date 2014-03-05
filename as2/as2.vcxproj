@@ -64,14 +64,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Raytracer.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Ray.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene.cpp" />
-    <ClInclude Include="Raytracer.h">
-      <FileType>CppCode</FileType>
-    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
