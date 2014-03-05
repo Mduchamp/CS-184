@@ -69,6 +69,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene.cpp" />
+    <ClInclude Include="Raytracer.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

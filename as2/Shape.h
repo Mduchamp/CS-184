@@ -25,8 +25,7 @@ public:
 	}
 
 	bool hitMe(Ray ray) {
-		Vector pos = ray.getPos();
-		float* C = pos.getCoors();
+		float* C = ray.getPos().getCoors();
 		if(C[0] <= maxx && C[0] >= minx && C[1] <= maxy && C[1] >= miny && C[2] <= maxz && C[2] >= minz) {
 			free(C);
 			return true;

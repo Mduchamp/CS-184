@@ -1,4 +1,4 @@
-#include "Shape.h"
+#include "Raytracer.h"
 #include "FreeImage.h"
 #include <stdio.h>
 #include <iostream>
@@ -6,6 +6,7 @@ using namespace std;
 
 float width = 600, height = 600;
 Vector UL, UR, LL, LR;
+Raytracer Raytracer = Raytracer(-10, -10, -10, 10, 10, 10);
 
 struct Camera {
 	Vector eye;
@@ -76,7 +77,7 @@ int main(int argc, char** argv)
 			//Vector dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
 			Vector dir = (((UR * v) + (UL * (1 - v)) * u) + (LR * v) + (LL * (1 - v)) * (1 - u) - cam.eye).Vnor();
 			Ray ray = Ray(cam.eye, dir);
-			//Color color = Raytracer(ray);
+			//Color color = Raytracer.trace(ray);
 			Color color = Color(0, 0, 1); //comment me out when raytracer exists and gives color
 			if(!screen.setPixel(k, i, color)) {
 				printf("There was a problem!\n");
