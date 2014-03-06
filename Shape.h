@@ -5,16 +5,15 @@
 class Shape 
 {
 public:
-	float minx;
-	float miny;
-	float minz;
-	float maxx;
-	float maxy;
-	float maxz;
-	bool hitMe(Ray ray);
+	float ka;
+	float kd;
+	float ks;
+	float p;
+	float kr;
+	bool hit(Ray ray, Vector* I, float* T);
 };
 
-class Box : public Shape
+/*class Box : public Shape
 {
 public:
 	Box(float lx, float ly, float lz, float hx, float hy, float hz) {
@@ -35,45 +34,43 @@ public:
 		}
 		
 	}
-};
+};*/
 
 class Sphere : public Shape 
 {
 	Vector center;
 	float radius;
 public:
-	Sphere(Vector cent, float rad) {
+	Sphere(Vector cent, float rad, float a = .1, float d = .5, float s = .8, float ps = 8, float r = 0) {
 		center = cent;
 		radius = rad;
-		float* C = cent.getCoors();
-		minx = C[0] - radius;
-		miny = C[1] - radius;
-		minz = C[2] - radius;
-		maxx = C[0] + radius;
-		maxy = C[1] + radius;
-		maxz = C[2] + radius;
-		free(C);
+		ka = a;
+		kd = d;
+		ks = s;
+		p = ps;
+		if(r == 0) {
+			kr = ks;
+		}
+		else {
+			kr = r;
+		}
 	}
 
-	Sphere(float* cent, float rad) {
+	Sphere(float* cent, float rad, float a = .1, float d = .5, float s = .8, float r = 0) {
 		center = Vector(cent[0], cent[1], cent[2]);
 		radius = rad;
-		float* C = center.getCoors();
-		minx = C[0] - radius;
-		miny = C[1] - radius;
-		minz = C[2] - radius;
-		maxx = C[0] + radius;
-		maxy = C[1] + radius;
-		maxz = C[2] + radius;
-		free(C);
+		ka = a;
+		kd = d;
+		ks = s;
+		if(r == 0) {
+			kr = ks;
+		}
+		else {
+			kr = r;
+		}
 	}
-
-	Box registerBox() {
-		Box myBox = Box(minx, miny, minz, maxx, maxy, maxz);
-		return myBox;
-	}
-
-	bool hit(Ray k)
+	
+	bool hit(Ray k, PoI intersect)
 	{
 		//transform ray into object space
 		Ray ray = Ray(Vector(0, 0, -2), k.getDir());
@@ -136,7 +133,13 @@ public:
 		p3 = vertex3;
 	}
 
-	bool hit (Ray k, Vector* I)
+	//function assumes that it's a valid coordinate
+	Vector getNormal()
+	{
+		return (p1 - p2).Vcrs(p3 - p2);
+	}
+
+	bool hit (Ray k, PoI intersect)
 	{
 // Copyright 2001 softSurfer, 2012 Dan Sunday
 // This code may be freely used and modified for any purpose
@@ -171,14 +174,15 @@ public:
         	return false;                   // => no intersect
     	// for a segment, also test if (r > 1.0) => no intersect
 
-    	*I = k.getPos() + dir.Vsca(r);            // intersect point of ray and plane
+        Vector I;
+    	I = k.getPos() + dir.Vsca(r);            // intersect point of ray and plane
 
     	// is I inside T?
     	float    uu, uv, vv, wu, wv, D;
     	uu = u.Vdot(u);
     	uv = u.Vdot(v);
     	vv = v.Vdot(v);
-    	w = *I - p1;
+    	w = I - p1;
     	wu = w.Vdot(u);
     	wv = w.Vdot(v);
     	D = uv * uv - uu * vv;
@@ -192,10 +196,14 @@ public:
     	if (t < 0.0 || (s + t) > 1.0)  // I is outside T
         	return false;
 
+        intersect.setCollision(I);
+        Vector myNorm = this->getNormal();
+        intersect.setNormal(myNorm);
     	return true;                       // I is in T
 	}
 
 
 };
+
 
 

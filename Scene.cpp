@@ -94,15 +94,15 @@ int main(int argc, char** argv)
 			Vector dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
 			Ray ray = Ray(cam.eye, dir);
 			Vector intersect = Vector(0, 0, 0);
-			//Color color = raytracer.trace(ray, 2);
-			if (triangle.hit(ray, &intersect))
+			Color color = raytracer.trace(ray, 2);
+			/*if (triangle.hit(ray, &intersect))
 			{
 				color = Color(1, 1, 0);	
 			}
 			else
 			{
 				color = Color(0, 0, 0);
-			}
+			}*/
 			if(!screen.setPixel(k, i, color)) {
 				printf("There was a problem!\n");
 			}

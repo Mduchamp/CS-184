@@ -1,6 +1,13 @@
 #include <stdlib.h>
 #include <math.h>
 
+float max(float a, float b) { //why doesn't the standard function work?
+	if(a >= b) {
+		return a;
+	}
+	return b;
+}
+
 class Vector
 {
 public:
@@ -107,10 +114,6 @@ public:
 		return (float)sqrt(x*x + y*y + z*z);
 	}
 
-	Color VtoC() {
-		return Color(x, y, z);
-	}
-
 	Vector max0() {
 		float zero = 0;
 		return Vector(max(x, zero), max(y, zero), max(z, zero));
@@ -128,10 +131,6 @@ public:
 		r = x;
 		g = y;
 		b = z;
-	}
-
-	Vector CtoV() {
-		return Vector(r, g, b);
 	}
 };
 
@@ -210,8 +209,20 @@ public:
 
 	float* getT() {
 		float* result = (float *) malloc(2*sizeof(float));
-		result[0] = maxt;
-		result[1] = mint;
+		result[0] = mint;
+		result[1] = maxt;
 		return result;
 	}
 };
+
+Color VtoC(Vector vector) {
+	float* C = vector.getCoors();
+	Color result = Color(C[0], C[1], C[2]);
+	free(C);
+	return result;
+}
+
+Vector CtoV(Color color) {
+	return Vector(color.r, color.g, color.b);
+}
+//use above two functions are own risk!
