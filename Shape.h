@@ -73,7 +73,7 @@ public:
 		return myBox;
 	}
 
-	bool hit(Ray k, PoI intersect)
+	bool hit(Ray k)
 	{
 		//transform ray into object space
 		Ray ray = Ray(Vector(0, 0, -2), k.getDir());
@@ -136,13 +136,7 @@ public:
 		p3 = vertex3;
 	}
 
-	//function assumes that it's a valid coordinate
-	Vector getNormal()
-	{
-		return (p1 - p2).Vcrs(p3 - p2);
-	}
-
-	bool hit (Ray k, PoI intersect)
+	bool hit (Ray k, Vector* I)
 	{
 // Copyright 2001 softSurfer, 2012 Dan Sunday
 // This code may be freely used and modified for any purpose
@@ -177,15 +171,14 @@ public:
         	return false;                   // => no intersect
     	// for a segment, also test if (r > 1.0) => no intersect
 
-        Vector I;
-    	I = k.getPos() + dir.Vsca(r);            // intersect point of ray and plane
+    	*I = k.getPos() + dir.Vsca(r);            // intersect point of ray and plane
 
     	// is I inside T?
     	float    uu, uv, vv, wu, wv, D;
     	uu = u.Vdot(u);
     	uv = u.Vdot(v);
     	vv = v.Vdot(v);
-    	w = I - p1;
+    	w = *I - p1;
     	wu = w.Vdot(u);
     	wv = w.Vdot(v);
     	D = uv * uv - uu * vv;
@@ -199,11 +192,10 @@ public:
     	if (t < 0.0 || (s + t) > 1.0)  // I is outside T
         	return false;
 
-        intersect.setCollision(I);
-        Vector myNorm = this->getNormal();
-        intersect.setNormal(myNorm);
     	return true;                       // I is in T
 	}
 
 
 };
+
+

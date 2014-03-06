@@ -93,13 +93,9 @@ int main(int argc, char** argv)
 			float v = (k + zpf) / height;
 			Vector dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
 			Ray ray = Ray(cam.eye, dir);
-
-
-			PoI intersect = PoI(Vector(0,0,0), Vector(0,0,0));
-
+			Vector intersect = Vector(0, 0, 0);
 			//Color color = raytracer.trace(ray, 2);
-			//Sphere m = Sphere(Vector(0,0,2), 5);
-			if (triangle.hit(ray, intersect))
+			if (triangle.hit(ray, &intersect))
 			{
 				color = Color(1, 1, 0);	
 			}
