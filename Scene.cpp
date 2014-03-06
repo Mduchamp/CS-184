@@ -60,20 +60,8 @@ public:
 	}
 };
 
-//THE TESTSSSSSSS
-void hittest()
-{
-	Ray ray = Ray(1000, 0 , 0, Vector(-0.9, 0.0000, 0));
-	Sphere sphere = Sphere(Vector(0, 0, 0), 1.0);
-	std::cout << sphere.hit(ray) << std::endl;
-	std::cout << "\n" << std::endl;
-}
-
-//THE TESTSSSSSSS
-
 int main(int argc, char** argv)
 {
-	//hittest();
 	Color color;
 	float zpf = 0.5; //primitive is double, causes problems
 	Camera cam = Camera();
@@ -84,7 +72,7 @@ int main(int argc, char** argv)
 	LL  = Vector(-1, -1, 1);
 	Image screen = Image(width, height);
 
-	//Sphere sphere = Sphere(Vector(0, 0, -2), 0.5);
+	Sphere sphere = Sphere(Vector(0, 0, 2), 0.1);
 	Triangle triangle = Triangle (Vector (0, 1, 3), Vector(1, 0, 3), Vector(-1, 0, 3));
 
 	for(float k = 0; k < height; k++) {
@@ -94,12 +82,12 @@ int main(int argc, char** argv)
 			Vector dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
 			Ray ray = Ray(cam.eye, dir);
 
-
 			PoI intersect = PoI(Vector(0,0,0), Vector(0,0,0));
+			bool gotHit = sphere.hit(ray, &intersect);
 
 			//Color color = raytracer.trace(ray, 2);
-			//Sphere m = Sphere(Vector(0,0,2), 5);
-			if (triangle.hit(ray, intersect))
+			
+			if (gotHit)
 			{
 				color = Color(1, 1, 0);	
 			}

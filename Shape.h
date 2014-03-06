@@ -73,19 +73,21 @@ public:
 		return myBox;
 	}
 
-	bool hit(Ray k, PoI intersect)
+	Vector getNormal(Vector intersect)
+	{
+		return intersect - center;
+	}
+
+	bool hit(Ray k, PoI* intersect)
 	{
 		//transform ray into object space
-		Ray ray = Ray(Vector(0, 0, -2), k.getDir());
+		Ray ray = Ray(k.getPos() - center, k.getDir());
 		
 		//shirly check
 		float a = ray.getDir().Vdot(ray.getDir());
 		float b = 2 * (ray.getDir().Vdot(ray.getPos()));
     	float c = ray.getPos().Vdot(ray.getPos()) - radius * radius;
     	float discriminant = b * b - 4 * a * c;
-
-    	//std::cout << discriminant;
-    	//std::cout << "\n";
 		
 		if (discriminant < 0)
 		{
@@ -101,6 +103,7 @@ public:
 		{
 			temp = (-b + d_root)/2.0;
 		}
+		float t;
 		float t0 = temp / a;
     	float t1 = c / temp;
     	if (t0 > t1)
@@ -115,14 +118,38 @@ public:
         // if t0 is less than zero, the intersection point is at t1
     	if (t0 < 0)
     	{
-        	//t = t1;
-        	return true;
+        	t = t1;
     	}
     	else
     	{
-        	//t = t0;
-        	return true;
+        	t = t0;
     	}
+    	Vector pos = k.getDir() * t + k.getPos();
+		Vector norm = this->getNormal(pos);
+
+/*		std::cout << pos.getCoors()[0];
+		std::cout << " ";
+		std::cout << pos.getCoors()[1];
+		std::cout << " ";
+		std::cout << pos.getCoors()[2];
+		std::cout << " ";
+		std::cout << "\n";*/
+		
+		intersect->setCollision(pos); 
+		Vector jorm = norm.Vnor();
+
+/*		std::cout << jorm.getCoors()[0];
+		std::cout << " ";
+		std::cout << jorm.getCoors()[1];
+		std::cout << " ";
+		std::cout << jorm.getCoors()[2];
+		std::cout << " ";
+		std::cout << "\n";
+		std::cout << "\n";
+		std::cout << "\n";*/
+
+		intersect->setNormal(jorm); 
+    	return true;
 	}
 };
 
@@ -142,7 +169,7 @@ public:
 		return (p1 - p2).Vcrs(p3 - p2);
 	}
 
-	bool hit (Ray k, PoI intersect)
+	bool hit (Ray k, PoI* intersect)
 	{
 // Copyright 2001 softSurfer, 2012 Dan Sunday
 // This code may be freely used and modified for any purpose
@@ -165,7 +192,7 @@ public:
     	w0 = k.getPos() - p1;
     	a = - n.Vdot(w0);
     	b = n.Vdot(dir);
-    	if (fabs(b) < 0.000000000001) {     // ray is  parallel to triangle plane
+    	if (fabs(b) < 0.0000000000000000000001) {     // ray is  parallel to triangle plane
         	if (a == 0)                 // ray lies in triangle plane
             	return true; //2
         	else return false;              // ray disjoint from plane
@@ -199,9 +226,19 @@ public:
     	if (t < 0.0 || (s + t) > 1.0)  // I is outside T
         	return false;
 
-        intersect.setCollision(I);
+        intersect->setCollision(I);
         Vector myNorm = this->getNormal();
-        intersect.setNormal(myNorm);
+        myNorm = myNorm * -1;
+        //if normal faces the wrong way, then needs to do soemthing about it
+        //cos(angle) = dot_product / (a.len * b.len)
+        float cosine = myNorm.Vdot(k.getDir()) / (myNorm.getMag() * k.getDir().getMag());
+        if (cosine < 0)
+        {
+       		myNorm = myNorm * -1;
+        }
+        Vector jorm = myNorm.Vnor();
+        //std::cout << jorm.getCoors()[2];
+        intersect->setNormal(jorm);
     	return true;                       // I is in T
 	}
 

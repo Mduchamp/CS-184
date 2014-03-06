@@ -214,4 +214,14 @@ public:
 	{
 		normal = n;
 	}
+
+	Vector getCollision()
+	{
+		return collision;
+	}
+
+	Vector getNormal()
+	{
+		return normal;
+	}
 };
