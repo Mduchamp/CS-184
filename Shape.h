@@ -162,7 +162,6 @@ public:
 		p2 = vertex2;
 		p3 = vertex3;
 	}
-
 	//function assumes that it's a valid coordinate
 	Vector getNormal()
 	{
@@ -204,8 +203,7 @@ public:
         	return false;                   // => no intersect
     	// for a segment, also test if (r > 1.0) => no intersect
 
-        Vector I;
-    	I = k.getPos() + dir.Vsca(r);            // intersect point of ray and plane
+    	Vector I = k.getPos() + dir.Vsca(r);            // intersect point of ray and plane
 
     	// is I inside T?
     	float    uu, uv, vv, wu, wv, D;
@@ -225,7 +223,6 @@ public:
     	t = (uv * wu - uu * wv) / D;
     	if (t < 0.0 || (s + t) > 1.0)  // I is outside T
         	return false;
-
         intersect->setCollision(I);
         Vector myNorm = this->getNormal();
         myNorm = myNorm * -1;
@@ -244,3 +241,5 @@ public:
 
 
 };
+
+

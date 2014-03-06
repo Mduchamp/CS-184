@@ -83,7 +83,7 @@ int main(int argc, char** argv)
 			Ray ray = Ray(cam.eye, dir);
 
 			PoI intersect = PoI(Vector(0,0,0), Vector(0,0,0));
-			bool gotHit = sphere.hit(ray, &intersect);
+			bool gotHit = triangle.hit(ray, &intersect);
 
 			//Color color = raytracer.trace(ray, 2);
 			

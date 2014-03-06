@@ -7,6 +7,7 @@ public:
 	float x;
 	float y;
 	float z;
+
 	Vector(float a = 0, float b = 0, float c = 0) {
 		x = a;
 		y = b;
@@ -106,6 +107,14 @@ public:
 		return (float)sqrt(x*x + y*y + z*z);
 	}
 
+	Color VtoC() {
+		return Color(x, y, z);
+	}
+
+	Vector max0() {
+		float zero = 0;
+		return Vector(max(x, zero), max(y, zero), max(z, zero));
+	}
 };
 
 class Color
@@ -120,15 +129,19 @@ public:
 		g = y;
 		b = z;
 	}
+
+	Vector CtoV() {
+		return Vector(r, g, b);
+	}
 };
 
 class Light
 {
+public:
 	Vector position;
 	Color color;
 	bool type;
 
-public:
 	Light(float a = 0, float b = 0, float c = 0, float d = 0, float e = 0, float f = 0, bool direct = false) {
 		position = Vector(a, b, c);
 		color = Color(d, e, f);
@@ -138,11 +151,19 @@ public:
 	Vector lightVector(Vector point) {
 		if(type) {
 			float* coors = position.getCoors();
-			Vector result = Vector(coors[0], coors[1], coors[2]);
+			Vector result = Vector(coors[0], coors[1], coors[2]).Vnor();
 			free(coors);
 			return result;
 		}
-		Vector result = point.Vsub(position);
+		Vector result = point.Vsub(position).Vnor();
+		return result;
+	}
+
+	Vector shadowVector(Vector point) {
+		if(type) {
+			return position.Vsca(-1).Vnor();
+		}
+		Vector result = position.Vsub(point).Vnor();
 		return result;
 	}
 };
@@ -155,18 +176,18 @@ class Ray
 	float maxt;
 
 public:
-	Ray(float x, float y, float z, Vector dir, float max = 1000, float min = 0) {
+	Ray(float x, float y, float z, Vector dir, float min = 0, float max = 100) {
 		origin = Vector(x, y, z);
 		direction = dir;
-		maxt = max;
 		mint = min;
+		maxt = max;
 	}
 
-	Ray(Vector ori, Vector dir, float max = 1000, float min = 0) {
+	Ray(Vector ori, Vector dir, float min = 0, float max = 100) {
 		origin = ori;
 		direction = dir;
-		maxt = max;
 		mint = min;
+		maxt = max;
 	}
 
 	float getMag(){
