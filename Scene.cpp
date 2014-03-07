@@ -2,11 +2,25 @@
 #include "FreeImage.h"
 #include <stdio.h>
 #include <iostream>
+#include <vector>
+//#include "Shape.h"
 using namespace std;
 
 float width = 600, height = 600;
 Vector UL, UR, LL, LR;
 Raytracer raytracer = Raytracer();
+/*Triangle c1 = Triangle(Vector (0, 1, 3), Vector(0, 0, 3), Vector(1, 1, 3), Color(0, 0, 1));
+Triangle c2 = Triangle(Vector(0, 0, 3), Vector (1, 0, 3), Vector(1, 1, 3), Color(0, 0, 1));
+Triangle c3 = Triangle(Vector (0, 1, 2), Vector(0, 0, 2), Vector(1, 1, 2), Color(0, 1, 0));
+Triangle c4 = Triangle(Vector(0, 0, 2), Vector (1, 0, 2), Vector(1, 1, 2), Color(0, 1, 0));
+*/
+Triangle t1 = Triangle (Vector (0, 1, 3.3), Vector(1, 0, 3.3), Vector(-1, 0, 3.3), Color(0, 0, 1));
+Triangle t2 = Triangle (Vector (0, 1.6, 3), Vector(1, 0.8, 3), Vector(-1, 0.8, 3), Color(0, 1, 0));
+Triangle t3 = Triangle (Vector (0, 0.5, 2.8), Vector(1, -0.5, 2.8), Vector(-1, -0.5, 2.8), Color(1, 0, 0));
+Triangle triangles[3] = {t1, t2, t3};
+Light light = Light(0.5, 0.5, 0.5, 0.5, 0.5, 0.5,false);
+//std::vector <Triangle> triangles;
+//triangles.push_back(t1);
 
 struct Camera {
 	Vector eye;
@@ -60,6 +74,39 @@ public:
 	}
 };
 
+bool intersect_search(Ray ray, Triangle* trig, int nTriangles, PoI* poi)
+{
+	float min_hit = 99999;
+	int count = 0;
+	float t_hit;
+	for (count = 0; count < nTriangles; count ++)
+	{
+		Triangle t = trig[count];
+		bool hit = t.hit(ray, &t_hit);
+		if (hit && t_hit < min_hit)
+		{
+			min_hit = t_hit;
+			poi->setCollision(ray.getDir() * min_hit + ray.getPos());
+			poi->setColor(t.kd);
+			Vector myNorm = t.getNormal();
+			//if normal faces the wrong way, then needs to do soemthing about it
+        	//cos(angle) = dot_product / (a.len * b.len)
+        	float cosine = myNorm.Vdot(ray.getDir()) / (myNorm.getMag() * ray.getDir().getMag());
+        	if (cosine < 0)
+        	{
+       			myNorm = myNorm * -1;
+        	}
+			poi->setNormal(t.getNormal());
+		}
+	}
+	if (min_hit != 99999)
+	{
+		return true;
+	}
+	return false;
+}
+
+
 int main(int argc, char** argv)
 {
 	Color color;
@@ -72,8 +119,8 @@ int main(int argc, char** argv)
 	LL  = Vector(-1, -1, 1);
 	Image screen = Image(width, height);
 
-	Sphere sphere = Sphere(Vector(0, 0, 2), 0.1);
-	Triangle triangle = Triangle (Vector (0, 1, 3), Vector(1, 0, 3), Vector(-1, 0, 3));
+	Sphere sphere = Sphere(Vector(0, 0, 2), 0.4);
+	//Triangle triangle = Triangle (Vector (0, 1, 3), Vector(1, 0, 3), Vector(-1, 0, 3));
 
 	for(float k = 0; k < height; k++) {
 		for(float i = 0; i < width; i++) {
@@ -81,15 +128,25 @@ int main(int argc, char** argv)
 			float v = (k + zpf) / height;
 			Vector dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
 			Ray ray = Ray(cam.eye, dir);
+			PoI poi = PoI();
+			bool gotHit = intersect_search(ray, triangles, 3, &poi);
 
+/*
 			PoI intersect = PoI(Vector(0,0,0), Vector(0,0,0));
 			bool gotHit = triangle.hit(ray, &intersect);
+			gotHit = gotHit || sphere.hit(ray, &intersect);
 
 			//Color color = raytracer.trace(ray, 2);
-			
+			*/
 			if (gotHit)
 			{
-				color = Color(1, 1, 0);	
+				color = poi.getColor();
+				//Ray shadow_ray. origin = poi.coliision, dir -> to light <<<<<<<<---- thingies for shadows
+				//bool isShadowed = intersect_search(shadow_ray, tra...)
+				//if(isShadowed)
+				//	color = 0;
+				//else
+				//color = poi.shade(light);
 			}
 			else
 			{

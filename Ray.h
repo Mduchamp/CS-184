@@ -114,12 +114,20 @@ public:
 	float r;
 	float g;
 	float b;
-
 	Color(float x = 0, float y = 0, float z = 0) {
 		r = x;
 		g = y;
 		b = z;
 	}
+
+	Color operator*(float scale) {
+		return Color(r*scale, g*scale, b*scale);
+	}
+
+	Color operator*(Color color) {
+		return Color(r*color.r, g*color.g, b*color.b);
+	}
+
 };
 
 class Light
@@ -133,6 +141,16 @@ public:
 		position = Vector(a, b, c);
 		color = Color(d, e, f);
 		type = direct;
+	}
+
+	Vector getPosition()
+	{
+		return position;
+	}
+
+	Color getColor()
+	{
+		return color;
 	}
 
 	Vector lightVector(Vector point) {
@@ -199,10 +217,37 @@ class PoI
 {
 	Vector collision;
 	Vector normal;
+	Color kd;
 public:
+	PoI()
+	{
+
+	}
 	PoI(Vector c, Vector n) {
 		collision = c;
 		normal = n;
+	}
+
+	Color shade(Light l)
+	{
+		Vector light_dir = l.getPosition() - collision;
+		light_dir = light_dir.Vnor();
+		float ndl = light_dir.Vdot(normal);
+		if (ndl < 0)
+		{
+			ndl = 0;
+		}
+		return (kd * l.getColor()) * ndl; 
+	}
+
+	void setColor(Color k)
+	{
+		kd = k;
+	}
+
+	Color getColor()
+	{
+		return kd;
 	}
 
 	void setCollision(Vector c)

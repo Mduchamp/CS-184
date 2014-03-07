@@ -5,6 +5,7 @@
 class Shape 
 {
 public:
+	Color kd;
 	float minx;
 	float miny;
 	float minz;
@@ -157,7 +158,8 @@ class Triangle : public Shape
 {
 	Vector p1, p2, p3;
 public:
-	Triangle(Vector vertex1, Vector vertex2, Vector vertex3) {
+	Triangle(Vector vertex1, Vector vertex2, Vector vertex3, Color _kd) {
+		kd = _kd;
 		p1 = vertex1;
 		p2 = vertex2;
 		p3 = vertex3;
@@ -168,7 +170,7 @@ public:
 		return (p1 - p2).Vcrs(p3 - p2);
 	}
 
-	bool hit (Ray k, PoI* intersect)
+	bool hit (Ray k, float* t_hit)
 	{
 // Copyright 2001 softSurfer, 2012 Dan Sunday
 // This code may be freely used and modified for any purpose
@@ -199,6 +201,7 @@ public:
 
     	// get intersect point of ray with triangle plane
     	r = a / b;
+    	*t_hit = r; //inter t
     	if (r < 0.0)                    // ray goes away from triangle
         	return false;                   // => no intersect
     	// for a segment, also test if (r > 1.0) => no intersect
@@ -223,19 +226,19 @@ public:
     	t = (uv * wu - uu * wv) / D;
     	if (t < 0.0 || (s + t) > 1.0)  // I is outside T
         	return false;
-        intersect->setCollision(I);
-        Vector myNorm = this->getNormal();
-        myNorm = myNorm * -1;
+        //intersect->setCollision(I);
+        //Vector myNorm = this->getNormal();
+        //myNorm = myNorm * -1;
         //if normal faces the wrong way, then needs to do soemthing about it
         //cos(angle) = dot_product / (a.len * b.len)
-        float cosine = myNorm.Vdot(k.getDir()) / (myNorm.getMag() * k.getDir().getMag());
+        /*float cosine = myNorm.Vdot(k.getDir()) / (myNorm.getMag() * k.getDir().getMag());
         if (cosine < 0)
         {
        		myNorm = myNorm * -1;
-        }
-        Vector jorm = myNorm.Vnor();
+        }*/
+        //Vector jorm = myNorm.Vnor();
         //std::cout << jorm.getCoors()[2];
-        intersect->setNormal(jorm);
+        //intersect->setNormal(jorm);
     	return true;                       // I is in T
 	}
 
