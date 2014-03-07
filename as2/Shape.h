@@ -10,7 +10,7 @@ public:
 	float ks;
 	float p;
 	float kr;
-	bool hit(Ray ray, Vector* I);
+	bool hit(Ray ray, Vector* I, float* T);
 };
 
 /*class Box : public Shape

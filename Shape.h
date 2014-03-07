@@ -13,9 +13,15 @@ public:
 	float maxy;
 	float maxz;
 	bool hitMe(Ray ray);
+	//float ka;
+	//float kd;
+	//float ks;
+	//float p;
+	//float kr;
+	//bool hit(Ray ray, Vector* I, float* T);
 };
 
-class Box : public Shape
+/*class Box : public Shape
 {
 public:
 	Box(float lx, float ly, float lz, float hx, float hy, float hz) {
@@ -36,44 +42,42 @@ public:
 		}
 		
 	}
-};
+};*/
 
 class Sphere : public Shape 
 {
 	Vector center;
 	float radius;
 public:
-	Sphere(Vector cent, float rad) {
+/*	Sphere(Vector cent, float rad, float a = .1, float d = .5, float s = .8, float ps = 8, float r = 0) {
 		center = cent;
 		radius = rad;
-		float* C = cent.getCoors();
-		minx = C[0] - radius;
-		miny = C[1] - radius;
-		minz = C[2] - radius;
-		maxx = C[0] + radius;
-		maxy = C[1] + radius;
-		maxz = C[2] + radius;
-		free(C);
+		ka = a;
+		kd = d;
+		ks = s;
+		p = ps;
+		if(r == 0) {
+			kr = ks;
+		}
+		else {
+			kr = r;
+		}
 	}
 
-	Sphere(float* cent, float rad) {
+	Sphere(float* cent, float rad, float a = .1, float d = .5, float s = .8, float r = 0) {
 		center = Vector(cent[0], cent[1], cent[2]);
 		radius = rad;
-		float* C = center.getCoors();
-		minx = C[0] - radius;
-		miny = C[1] - radius;
-		minz = C[2] - radius;
-		maxx = C[0] + radius;
-		maxy = C[1] + radius;
-		maxz = C[2] + radius;
-		free(C);
+		ka = a;
+		kd = d;
+		ks = s;
+		if(r == 0) {
+			kr = ks;
+		}
+		else {
+			kr = r;
+		}
 	}
-
-	Box registerBox() {
-		Box myBox = Box(minx, miny, minz, maxx, maxy, maxz);
-		return myBox;
-	}
-
+*/
 	Vector getNormal(Vector intersect)
 	{
 		return intersect - center;
@@ -244,5 +248,6 @@ public:
 
 
 };
+
 
 
