@@ -118,8 +118,8 @@ int main(int argc, char** argv)
 	LR  = Vector( 1, -1, 1);
 	LL  = Vector(-1, -1, 1);
 	Image screen = Image(width, height);
-
-	Sphere sphere = Sphere(Vector(0, 0, 2), 0.4);
+	float p4 = 0.4;
+	Sphere sphere = Sphere(Vector(0, 0, 2), p4);
 	//Triangle triangle = Triangle (Vector (0, 1, 3), Vector(1, 0, 3), Vector(-1, 0, 3));
 
 	for(float k = 0; k < height; k++) {

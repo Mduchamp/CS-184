@@ -5,12 +5,15 @@
 class Shape 
 {
 public:
-	float ka;
-	float kd;
-	float ks;
-	float p;
-	float kr;
-	bool hit(Ray ray, Vector* I, float* T);
+	Color kd;
+	float minx;
+	float miny;
+	float minz;
+	float maxx;
+	float maxy;
+	float maxz;
+	bool hit(Ray ray, float* t_hit);
+	Vector getNormal(Vector intercept);
 };
 
 /*class Box : public Shape
@@ -41,48 +44,33 @@ class Sphere : public Shape
 	Vector center;
 	float radius;
 public:
-	Sphere(Vector cent, float rad, float a = .1, float d = .5, float s = .8, float ps = 8, float r = 0) {
+	Sphere(Vector cent, float rad, float d = .5) {
 		center = cent;
 		radius = rad;
-		ka = a;
 		kd = d;
-		ks = s;
-		p = ps;
-		if(r == 0) {
-			kr = ks;
-		}
-		else {
-			kr = r;
-		}
 	}
 
-	Sphere(float* cent, float rad, float a = .1, float d = .5, float s = .8, float r = 0) {
+	Sphere(float* cent, float rad, float d = .5) {
 		center = Vector(cent[0], cent[1], cent[2]);
 		radius = rad;
-		ka = a;
 		kd = d;
-		ks = s;
-		if(r == 0) {
-			kr = ks;
-		}
-		else {
-			kr = r;
-		}
 	}
-	
-	bool hit(Ray k, PoI intersect)
+
+	Vector getNormal(Vector intersect)
+	{
+		return intersect - center;
+	}
+
+	bool hit(Ray k, float* t_hit)
 	{
 		//transform ray into object space
-		Ray ray = Ray(Vector(0, 0, -2), k.getDir());
+		Ray ray = Ray(k.getPos() - center, k.getDir());
 		
 		//shirly check
 		float a = ray.getDir().Vdot(ray.getDir());
 		float b = 2 * (ray.getDir().Vdot(ray.getPos()));
     	float c = ray.getPos().Vdot(ray.getPos()) - radius * radius;
     	float discriminant = b * b - 4 * a * c;
-
-    	//std::cout << discriminant;
-    	//std::cout << "\n";
 		
 		if (discriminant < 0)
 		{
@@ -98,6 +86,7 @@ public:
 		{
 			temp = (-b + d_root)/2.0;
 		}
+		float t;
 		float t0 = temp / a;
     	float t1 = c / temp;
     	if (t0 > t1)
@@ -112,14 +101,31 @@ public:
         // if t0 is less than zero, the intersection point is at t1
     	if (t0 < 0)
     	{
-        	//t = t1;
-        	return true;
+        	t = t1;
     	}
     	else
     	{
-        	//t = t0;
-        	return true;
+        	t = t0;
     	}
+
+/*		std::cout << pos.getCoors()[0];
+		std::cout << " ";
+		std::cout << pos.getCoors()[1];
+		std::cout << " ";
+		std::cout << pos.getCoors()[2];
+		std::cout << " ";
+		std::cout << "\n";
+		std::cout << jorm.getCoors()[0];
+		std::cout << " ";
+		std::cout << jorm.getCoors()[1];
+		std::cout << " ";
+		std::cout << jorm.getCoors()[2];
+		std::cout << " ";
+		std::cout << "\n";
+		std::cout << "\n";
+		std::cout << "\n";*/
+		t_hit[0] = t;
+    	return true;
 	}
 };
 
@@ -127,19 +133,19 @@ class Triangle : public Shape
 {
 	Vector p1, p2, p3;
 public:
-	Triangle(Vector vertex1, Vector vertex2, Vector vertex3) {
+	Triangle(Vector vertex1, Vector vertex2, Vector vertex3, Color _kd) {
+		kd = _kd;
 		p1 = vertex1;
 		p2 = vertex2;
 		p3 = vertex3;
 	}
-
 	//function assumes that it's a valid coordinate
 	Vector getNormal()
 	{
 		return (p1 - p2).Vcrs(p3 - p2);
 	}
 
-	bool hit (Ray k, PoI intersect)
+	bool hit (Ray k, float* t_hit)
 	{
 // Copyright 2001 softSurfer, 2012 Dan Sunday
 // This code may be freely used and modified for any purpose
@@ -162,7 +168,7 @@ public:
     	w0 = k.getPos() - p1;
     	a = - n.Vdot(w0);
     	b = n.Vdot(dir);
-    	if (fabs(b) < 0.000000000001) {     // ray is  parallel to triangle plane
+    	if (fabs(b) < 0.0000000000000000000001) {     // ray is  parallel to triangle plane
         	if (a == 0)                 // ray lies in triangle plane
             	return true; //2
         	else return false;              // ray disjoint from plane
@@ -170,12 +176,12 @@ public:
 
     	// get intersect point of ray with triangle plane
     	r = a / b;
+    	*t_hit = r; //inter t
     	if (r < 0.0)                    // ray goes away from triangle
         	return false;                   // => no intersect
     	// for a segment, also test if (r > 1.0) => no intersect
 
-        Vector I;
-    	I = k.getPos() + dir.Vsca(r);            // intersect point of ray and plane
+    	Vector I = k.getPos() + dir.Vsca(r);            // intersect point of ray and plane
 
     	// is I inside T?
     	float    uu, uv, vv, wu, wv, D;
@@ -195,10 +201,19 @@ public:
     	t = (uv * wu - uu * wv) / D;
     	if (t < 0.0 || (s + t) > 1.0)  // I is outside T
         	return false;
-
-        intersect.setCollision(I);
-        Vector myNorm = this->getNormal();
-        intersect.setNormal(myNorm);
+        //intersect->setCollision(I);
+        //Vector myNorm = this->getNormal();
+        //myNorm = myNorm * -1;
+        //if normal faces the wrong way, then needs to do soemthing about it
+        //cos(angle) = dot_product / (a.len * b.len)
+        /*float cosine = myNorm.Vdot(k.getDir()) / (myNorm.getMag() * k.getDir().getMag());
+        if (cosine < 0)
+        {
+       		myNorm = myNorm * -1;
+        }*/
+        //Vector jorm = myNorm.Vnor();
+        //std::cout << jorm.getCoors()[2];
+        //intersect->setNormal(jorm);
     	return true;                       // I is in T
 	}
 

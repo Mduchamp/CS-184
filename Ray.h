@@ -62,6 +62,11 @@ public:
 		return result;
 	}
 
+	Vector Vmul(Vector mul) {
+		Vector result = (x * mul.x, y * mul.y, z * mul.z);
+		return result;
+	}
+
 	Vector Vsca(float scale) {
 		Vector result = Vector(x * scale, y * scale, z * scale);
 		return result;
@@ -302,4 +307,4 @@ Color VtoC(Vector vector) {
 Vector CtoV(Color color) {
 	return Vector(color.r, color.g, color.b);
 }
-//use above two functions are own risk!
+//use above two functions at own risk!

@@ -62,6 +62,11 @@ public:
 		return result;
 	}
 
+	Vector Vmul(Vector mul) {
+		Vector result = (x * mul.x, y * mul.y, z * mul.z);
+		return result;
+	}
+
 	Vector Vsca(float scale) {
 		Vector result = Vector(x * scale, y * scale, z * scale);
 		return result;
@@ -126,12 +131,20 @@ public:
 	float r;
 	float g;
 	float b;
-
 	Color(float x = 0, float y = 0, float z = 0) {
 		r = x;
 		g = y;
 		b = z;
 	}
+
+	Color operator*(float scale) {
+		return Color(r*scale, g*scale, b*scale);
+	}
+
+	Color operator*(Color color) {
+		return Color(r*color.r, g*color.g, b*color.b);
+	}
+
 };
 
 class Light
@@ -145,6 +158,16 @@ public:
 		position = Vector(a, b, c);
 		color = Color(d, e, f);
 		type = direct;
+	}
+
+	Vector getPosition()
+	{
+		return position;
+	}
+
+	Color getColor()
+	{
+		return color;
 	}
 
 	Vector lightVector(Vector point) {
@@ -215,6 +238,65 @@ public:
 	}
 };
 
+class PoI
+{
+	Vector collision;
+	Vector normal;
+	Color kd;
+public:
+	PoI()
+	{
+
+	}
+	PoI(Vector c, Vector n) {
+		collision = c;
+		normal = n;
+	}
+
+	Color shade(Light l)
+	{
+		Vector light_dir = l.getPosition() - collision;
+		light_dir = light_dir.Vnor();
+		float ndl = light_dir.Vdot(normal);
+		if (ndl < 0)
+		{
+			ndl = 0;
+		}
+		return (kd * l.getColor()) * ndl; 
+	}
+
+	void setColor(Color k)
+	{
+		kd = k;
+	}
+
+	Color getColor()
+	{
+		return kd;
+	}
+
+	void setCollision(Vector c)
+	{
+		collision = c;
+	}
+
+	void setNormal(Vector n)
+	{
+		normal = n;
+	}
+
+	Vector getCollision()
+	{
+		return collision;
+	}
+
+	Vector getNormal()
+	{
+		return normal;
+	}
+};
+
+
 Color VtoC(Vector vector) {
 	float* C = vector.getCoors();
 	Color result = Color(C[0], C[1], C[2]);
@@ -225,4 +307,4 @@ Color VtoC(Vector vector) {
 Vector CtoV(Color color) {
 	return Vector(color.r, color.g, color.b);
 }
-//use above two functions are own risk!
+//use above two functions at own risk!

@@ -78,10 +78,25 @@ public:
 class Raytracer {
 	ShapeList scene;
 	LightList lights;
+	Vector e;
+	float p;
+	Vector ks;
+	Vector ka;
+	Vector kr;
 public:
-	Raytracer() {
+	Raytracer(Vector _e = Vector(0, 0, 0), float _p = 8, Color _ks = Color(0.8, 0.8, 0.8), Color _ka = Color(0.1, 0.1, 0.1), Color _kr = Color(0, 0, 0)) {
 		scene = ShapeList();
 		lights = LightList();
+		e = _e;
+		p = _p;
+		ks = CtoV(_ks);
+		ka = CtoV(_ka);
+		if(_kr.r == 0 && _kr.g == 0 && _kr.b == 0) {
+			kr = ks;
+		}
+		else {
+			kr = CtoV(_kr);
+		}
 	}
 
 	void registerShape(Shape shape) {
@@ -96,8 +111,8 @@ public:
 		if(recurse <= 0) {
 			return Color(0, 0, 0);
 		}
+		Vector s = ray.getDir();
 		Vector* I = (Vector *) malloc(2*sizeof(Vector));
-		Vector* save = (Vector *) malloc(2*sizeof(Vector));
 		float* T = (float *)  malloc(sizeof(float));
 		Shape close = Shape();
 		int length = scene.getLength();
@@ -105,18 +120,17 @@ public:
 		Color color = Color();
 		for(int i = 0; i < length; i++) {
 			Shape shape = scene.get(i);
-			if(shape.hit(ray, I, T)) {
+			if(shape.hit(ray, T)) {
 				if(*T < mint) {
-					save[0] = I[0];
-					save[1] = I[1];
+					I[0] = e.Vadd(s.Vsca(*T));
+					I[1] = shape.getNormal(I[0]);
 					mint = *T;
 					close = shape;
 				}
 			}
 		}
-		Color result = Phong(save[0], save[1], ray, close, recurse);
+		Color result = Phong(I[0], I[1], ray, close, recurse);
 		free(I);
-		free(save);
 		free(T);
 		return result;
 	}
@@ -135,10 +149,10 @@ public:
 				Vector l = light.lightVector(point);
 				Vector r = reflection(l, n);
 				float ln = l.Vdot(n);
-				Vector color = light.color.CtoV();
-				Vector kdcolor = color.Vsca(ln).Vsca(shape.kd).max0();
-				Vector kscolor = color.Vsca(max(pow(r.Vdot(v),shape.p),zero)).Vsca(shape.ks);
-				Vector kacolor = color.Vsca(shape.ka).max0();
+				Vector color = CtoV(light.color);
+				Vector kdcolor = color.Vsca(ln).Vmul(CtoV(shape.kd)).max0();
+				Vector kscolor = color.Vsca(max(pow(r.Vdot(v),p),zero)).Vmul(ks);
+				Vector kacolor = color.Vmul(ka).max0();
 				KA.Vadd(kacolor);
 				KS.Vadd(kscolor);
 				KD.Vadd(kdcolor);
@@ -146,23 +160,23 @@ public:
 		}
 		Vector re = reflection(ray.getDir(), n);
 		Ray reflect = Ray(point, re, 0.1);
-		Vector KR = trace(reflect, recurse-1).CtoV().Vsca(shape.kr); //the recursive call
-		Color result = KA.Vadd(KS.Vadd(KD.Vadd(KR))).Vnor().VtoC();
+		Vector KR = CtoV(trace(reflect, recurse-1)).Vmul(kr); //the recursive call
+		Color result = VtoC(KA.Vadd(KS.Vadd(KD.Vadd(KR))).Vnor());
 		return result;
 	}
 
 	bool shadowpounce(Vector point, Light light) {
 		Vector shadow = light.shadowVector(point);
 		Ray shadowray = Ray(point, shadow, 0.1);
-		Vector* I = (Vector *) malloc(2*sizeof(Vector));
+		float* T = (float *) malloc(sizeof(float));
 		int num = scene.getLength();
 		for(int i = 0; i < num; i++) {
-			if(scene.get(i).hit(shadowray, I)) {
-				free(I);
+			if(scene.get(i).hit(shadowray, T)) {
+				free(T);
 				return true;
 			}
 		}
-		free(I);
+		free(T);
 		return false;
 	}
 

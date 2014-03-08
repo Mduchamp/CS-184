@@ -12,13 +12,8 @@ public:
 	float maxx;
 	float maxy;
 	float maxz;
-	bool hitMe(Ray ray);
-	//float ka;
-	//float kd;
-	//float ks;
-	//float p;
-	//float kr;
-	//bool hit(Ray ray, Vector* I, float* T);
+	bool hit(Ray ray, float* t_hit);
+	Vector getNormal(Vector intercept);
 };
 
 /*class Box : public Shape
@@ -49,41 +44,24 @@ class Sphere : public Shape
 	Vector center;
 	float radius;
 public:
-/*	Sphere(Vector cent, float rad, float a = .1, float d = .5, float s = .8, float ps = 8, float r = 0) {
+	Sphere(Vector cent, float rad, float d = .5) {
 		center = cent;
 		radius = rad;
-		ka = a;
 		kd = d;
-		ks = s;
-		p = ps;
-		if(r == 0) {
-			kr = ks;
-		}
-		else {
-			kr = r;
-		}
 	}
 
-	Sphere(float* cent, float rad, float a = .1, float d = .5, float s = .8, float r = 0) {
+	Sphere(float* cent, float rad, float d = .5) {
 		center = Vector(cent[0], cent[1], cent[2]);
 		radius = rad;
-		ka = a;
 		kd = d;
-		ks = s;
-		if(r == 0) {
-			kr = ks;
-		}
-		else {
-			kr = r;
-		}
 	}
-*/
+
 	Vector getNormal(Vector intersect)
 	{
 		return intersect - center;
 	}
 
-	bool hit(Ray k, PoI* intersect)
+	bool hit(Ray k, float* t_hit)
 	{
 		//transform ray into object space
 		Ray ray = Ray(k.getPos() - center, k.getDir());
@@ -129,8 +107,6 @@ public:
     	{
         	t = t0;
     	}
-    	Vector pos = k.getDir() * t + k.getPos();
-		Vector norm = this->getNormal(pos);
 
 /*		std::cout << pos.getCoors()[0];
 		std::cout << " ";
@@ -138,12 +114,8 @@ public:
 		std::cout << " ";
 		std::cout << pos.getCoors()[2];
 		std::cout << " ";
-		std::cout << "\n";*/
-		
-		intersect->setCollision(pos); 
-		Vector jorm = norm.Vnor();
-
-/*		std::cout << jorm.getCoors()[0];
+		std::cout << "\n";
+		std::cout << jorm.getCoors()[0];
 		std::cout << " ";
 		std::cout << jorm.getCoors()[1];
 		std::cout << " ";
@@ -152,8 +124,7 @@ public:
 		std::cout << "\n";
 		std::cout << "\n";
 		std::cout << "\n";*/
-
-		intersect->setNormal(jorm); 
+		t_hit[0] = t;
     	return true;
 	}
 };
