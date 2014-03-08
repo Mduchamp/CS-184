@@ -44,16 +44,16 @@ class Sphere : public Shape
 	Vector center;
 	float radius;
 public:
-	Sphere(Vector cent, float rad, float d = .5) {
+	Sphere(Vector cent, float rad, Color _kd = Color(0.5, 0.5, 0.5)) {
 		center = cent;
 		radius = rad;
-		kd = d;
+		kd = _kd;
 	}
 
-	Sphere(float* cent, float rad, float d = .5) {
+	Sphere(float* cent, float rad, Color _kd = Color(0.5, 0.5, 0.5)) {
 		center = Vector(cent[0], cent[1], cent[2]);
 		radius = rad;
-		kd = d;
+		kd = _kd;
 	}
 
 	Vector getNormal(Vector intersect)
@@ -133,14 +133,14 @@ class Triangle : public Shape
 {
 	Vector p1, p2, p3;
 public:
-	Triangle(Vector vertex1, Vector vertex2, Vector vertex3, Color _kd) {
+	Triangle(Vector vertex1, Vector vertex2, Vector vertex3, Color _kd = Color(0.5, 0.5, 0.5)) {
 		kd = _kd;
 		p1 = vertex1;
 		p2 = vertex2;
 		p3 = vertex3;
 	}
 	//function assumes that it's a valid coordinate
-	Vector getNormal()
+	Vector getNormal(Vector intercept = Vector(0, 0, 0))
 	{
 		return (p1 - p2).Vcrs(p3 - p2);
 	}

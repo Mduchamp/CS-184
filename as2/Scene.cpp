@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-//#include "Shape.h"
 using namespace std;
 
 float width = 600, height = 600;
@@ -118,9 +117,12 @@ int main(int argc, char** argv)
 	LR  = Vector( 1, -1, 1);
 	LL  = Vector(-1, -1, 1);
 	Image screen = Image(width, height);
-	float p4 = 0.4;
-	Sphere sphere = Sphere(Vector(0, 0, 2), p4);
+	Sphere sphere = Sphere(Vector(0, 0, 2), 1);
+	raytracer.registerShape(sphere);
 	//Triangle triangle = Triangle (Vector (0, 1, 3), Vector(1, 0, 3), Vector(-1, 0, 3));
+	//raytracer.registerShape(triangle);
+	Light light = Light(-2, 2, 2, 1, 1, 0);
+	raytracer.registerLight(light);
 
 	for(float k = 0; k < height; k++) {
 		for(float i = 0; i < width; i++) {
@@ -128,17 +130,16 @@ int main(int argc, char** argv)
 			float v = (k + zpf) / height;
 			Vector dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
 			Ray ray = Ray(cam.eye, dir);
-			PoI poi = PoI();
-			bool gotHit = intersect_search(ray, triangles, 3, &poi);
+			//PoI poi = PoI();
+			//bool gotHit = intersect_search(ray, triangles, 3, &poi);
 
 /*
 			PoI intersect = PoI(Vector(0,0,0), Vector(0,0,0));
 			bool gotHit = triangle.hit(ray, &intersect);
-			gotHit = gotHit || sphere.hit(ray, &intersect);
+			gotHit = gotHit || sphere.hit(ray, &intersect);*/
 
-			//Color color = raytracer.trace(ray, 2);
-			*/
-			if (gotHit)
+			Color color = raytracer.trace(ray, 1);
+			/*if (gotHit)
 			{
 				color = poi.getColor();
 				//Ray shadow_ray. origin = poi.coliision, dir -> to light <<<<<<<<---- thingies for shadows
@@ -151,7 +152,7 @@ int main(int argc, char** argv)
 			else
 			{
 				color = Color(0, 0, 0);
-			}
+			}*/
 			if(!screen.setPixel(k, i, color)) {
 				printf("There was a problem!\n");
 			}

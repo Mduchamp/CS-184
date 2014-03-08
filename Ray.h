@@ -154,9 +154,9 @@ public:
 	Color color;
 	bool type;
 
-	Light(float a = 0, float b = 0, float c = 0, float d = 0, float e = 0, float f = 0, bool direct = false) {
-		position = Vector(a, b, c);
-		color = Color(d, e, f);
+	Light(float _x = 0, float _y = 0, float _z = 0, float _r = 0, float _g = 0, float _b = 0, bool direct = false) {
+		position = Vector(_x, _y, _z);
+		color = Color(_r, _g, _b);
 		type = direct;
 	}
 
