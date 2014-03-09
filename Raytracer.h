@@ -113,25 +113,24 @@ public:
 		}
 		Vector s = ray.getDir();
 		Vector* I = (Vector *) malloc(2*sizeof(Vector));
-		float* T = (float *)  malloc(sizeof(float));
+		float t;
 		Shape close = Shape();
 		int length = scene.getLength();
 		float mint = ray.getT()[1] + 1;
 		Color color = Color();
 		for(int i = 0; i < length; i++) {
 			Shape shape = scene.get(i);
-			if(shape.hit(ray, T)) {
-				if(*T < mint) {
-					I[0] = e.Vadd(s.Vsca(*T));
-					I[1] = shape.getNormal(I[0]);
-					mint = *T;
+			/*if(shape.hit(ray, &t)) {
+				if(t < mint) {
+					I[0] = e.Vadd(s.Vsca(t));
+					I[1] = shape.getNormal(&I[0]);
+					mint = t;
 					close = shape;
 				}
-			}
+			}*/
 		}
 		Color result = Phong(I[0], I[1], ray, close, recurse);
 		free(I);
-		free(T);
 		return result;
 	}
 
@@ -168,15 +167,14 @@ public:
 	bool shadowpounce(Vector point, Light light) {
 		Vector shadow = light.shadowVector(point);
 		Ray shadowray = Ray(point, shadow, 0.1);
-		float* T = (float *) malloc(sizeof(float));
+		float t;
 		int num = scene.getLength();
 		for(int i = 0; i < num; i++) {
-			if(scene.get(i).hit(shadowray, T)) {
-				free(T);
+			Shape x = scene.get(i);
+			if(	x.hit(shadowray, &t)) {
 				return true;
 			}
 		}
-		free(T);
 		return false;
 	}
 

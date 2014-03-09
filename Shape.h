@@ -12,8 +12,10 @@ public:
 	float maxx;
 	float maxy;
 	float maxz;
-	bool hit(Ray ray, float* t_hit);
+	bool hit (Ray k, float* t_hit);
 	Vector getNormal(Vector intercept);
+	Vector getNormal(Vector* intercept);
+	int identity();
 };
 
 /*class Box : public Shape
@@ -56,9 +58,19 @@ public:
 		kd = _kd;
 	}
 
+	int identity()
+	{
+		return 1;
+	}
+
 	Vector getNormal(Vector intersect)
 	{
 		return intersect - center;
+	}
+
+	Vector getNormal(Vector* intersect)
+	{
+		return *intersect - center;
 	}
 
 	bool hit(Ray k, float* t_hit)
@@ -143,6 +155,16 @@ public:
 	Vector getNormal(Vector intercept = Vector(0, 0, 0))
 	{
 		return (p1 - p2).Vcrs(p3 - p2);
+	}
+
+	Vector getNormal(Vector* intercept)
+	{
+		return (p1 - p2).Vcrs(p3 - p2);
+	}
+
+	int identity()
+	{
+		return 2;
 	}
 
 	bool hit (Ray k, float* t_hit)
