@@ -2,21 +2,15 @@
 #include <stdio.h>
 #include <iostream>
 
-class Shape 
+/*class Shape 
 {
 public:
 	Color kd;
-	float minx;
-	float miny;
-	float minz;
-	float maxx;
-	float maxy;
-	float maxz;
 	bool hit (Ray k, float* t_hit);
 	Vector getNormal(Vector intercept);
 	Vector getNormal(Vector* intercept);
 	int identity();
-};
+};*/
 
 /*class Box : public Shape
 {
@@ -41,11 +35,12 @@ public:
 	}
 };*/
 
-class Sphere : public Shape 
+class Sphere// : public Shape 
 {
 	Vector center;
 	float radius;
 public:
+	Color kd;
 	Sphere(Vector cent, float rad, Color _kd = Color(0.5, 0.5, 0.5)) {
 		center = cent;
 		radius = rad;
@@ -141,10 +136,11 @@ public:
 	}
 };
 
-class Triangle : public Shape
+class Triangle// : public Shape
 {
 	Vector p1, p2, p3;
 public:
+	Color kd;
 	Triangle(Vector vertex1, Vector vertex2, Vector vertex3, Color _kd = Color(0.5, 0.5, 0.5)) {
 		kd = _kd;
 		p1 = vertex1;
