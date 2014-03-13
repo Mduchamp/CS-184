@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <string>
 using namespace std;
 
 float width = 700, height = 700;
@@ -105,9 +107,34 @@ bool intersect_search(Ray ray, Triangle* trig, int nTriangles, PoI* poi)
 	return false;
 }
 
+void readObj()
+{
+	string line;
+  	ifstream myfile ("obj/cube.obj");
+  	//copied basics from http://stackoverflow.com/questions/4263837/what-is-the-content-of-obj-file
+  	if (myfile.is_open())
+  	{
+    	while (!myfile.eof() )
+    	{
+      		getline (myfile,line);
+      		if (line[0] == 118 && line[1] == 32){
+      			cout << line << endl;
+      		}
+      		else if (line[0] == 118 && line[1] == 32){
+      			cout << line << endl;
+      		}
+      		else if (line[0] == 118 && line[1] == 32){
+      			cout << line << endl;
+      		}
+    	}
+    	myfile.close();
+  	}
+	else cout << "Unable to open file"; 
+}
 
 int main(int argc, char** argv)
 {
+	readObj();
 	Color color;
 	float zpf = 0.5; //primitive is double, causes problems
 	Camera cam = Camera();

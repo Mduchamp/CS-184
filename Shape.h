@@ -131,6 +131,10 @@ public:
 		std::cout << "\n";
 		std::cout << "\n";
 		std::cout << "\n";*/
+		if (t <= k.getmin() || t >= k.getmax())
+		{
+			return false;
+		}
 		t_hit[0] = t;
     	return true;
 	}

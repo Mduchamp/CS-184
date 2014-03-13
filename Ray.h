@@ -216,6 +216,16 @@ public:
 		maxt = max;
 	}
 
+	float getmin()
+	{
+		return mint;
+	}
+
+	float getmax()
+	{
+		return maxt;
+	}
+
 	float getMag(){
 		return direction.getMag();
 	}
