@@ -195,11 +195,13 @@ public:
 
 	Color trace(Ray ray, int recurse) {
 		if(recurse <= 0) {
+
 			return Color(0, 0, 0);
 		}
 		Color result = Color();
 		Vector s = ray.getDir();
 		Vector* I = (Vector *) malloc(2*sizeof(Vector));
+		bool hit = false;
 		bool type = true;
 		float t;
 		Sphere closes = Sphere(Vector(1,1,1), 1);
@@ -214,6 +216,7 @@ public:
 					I[1] = sphere.getNormal(&I[0]);
 					mint = t;
 					closes = sphere;
+					hit = true;
 				}
 			}
 		}
@@ -228,14 +231,17 @@ public:
 					I[1] = triangle.getNormal(&I[0]);
 					mint = t;
 					closet = triangle;
+					hit = true;
 				}
 			}
 		}
-		if(type) {
-			result = Phong(I[0], I[1], ray, closes, recurse);
-		}
-		else {
-			result = Phong(I[0], I[1], ray, closet, recurse);
+		if(hit) {
+			if(type) {
+				result = Phong(I[0], I[1], ray, closes, recurse);
+			}
+			else {
+				result = Phong(I[0], I[1], ray, closet, recurse);
+			}
 		}
 		free(I);
 		return result;
@@ -247,27 +253,39 @@ public:
 		Vector KA = Vector(0, 0, 0);
 		Vector KD = Vector(0, 0, 0);
 		Vector KS = Vector(0, 0, 0);
-		Vector n = norm.Vnor();
+		Vector n = norm;
 		Vector v = ray.getDir().Vsca(-1);
 		for(int i = 0; i < num; i++) {
 			Light light = lights.get(i);
 			if(!shadowpounce(point, light)) {
 				Vector l = light.lightVector(point);
 				Vector r = reflection(l, n);
+				//printf("r: %f, %f, %f\n", r.x, r.y, r.z);
 				float ln = l.Vdot(n);
+				float rv = r.Vdot(v);
 				Vector color = CtoV(light.color);
-				Vector kdcolor = color.Vsca(ln).Vmul(CtoV(sphere.kd)).max0();
-				Vector kscolor = color.Vsca(max(pow(r.Vdot(v),p),zero)).Vmul(ks);
-				Vector kacolor = color.Vmul(ka).max0();
-				KA.Vadd(kacolor);
-				KS.Vadd(kscolor);
-				KD.Vadd(kdcolor);
+				//printf("color: %f, %f, %f\n", color.x, color.y, color.z);
+				//printf("sphere kd: %f, %f, %f\n", sphere.kd.r, sphere.kd.g, sphere.kd.b);
+				//printf("ln: %f\n", ln);
+				//Vector kdcolor = color.Vsca(ln).Vmul(CtoV(sphere.kd));//.max0();
+				Vector kdcolor = color * ln * CtoV(sphere.kd);
+				//printf("kd: %f, %f, %f\n", kdcolor.x, kdcolor.y, kdcolor.z);
+				//Vector kscolor = color.Vsca(max(pow(r.Vdot(v),p),zero)).Vmul(ks);
+				Vector kscolor = color * max(pow(rv,p),zero) * ks;
+				//printf("ks: %f, %f, %f\n", kscolor.x, kscolor.y, kscolor.z);
+				//Vector kacolor = color.Vmul(ka);//.max0();
+				Vector kacolor = color * ka;
+				//printf("ka: %f, %f, %f\n", kacolor.x, kacolor.y, kacolor.z);
+				KA = KA.Vadd(kacolor);
+				KS = KS.Vadd(kscolor);
+				KD = KD.Vadd(kdcolor);
 			}
 		}
 		Vector re = reflection(ray.getDir(), n);
 		Ray reflect = Ray(point, re, 0.1);
 		Vector KR = CtoV(trace(reflect, recurse-1)).Vmul(kr); //the recursive call
-		Color result = VtoC(KA.Vadd(KS.Vadd(KD.Vadd(KR))).Vnor());
+		Color result = VtoC(KA.Vadd(KS.Vadd(KD.Vadd(KR))));
+		//printf("result color: %f, %f, %f\n", result.r, result.g, result.b);
 		return result;
 	}
 
@@ -289,9 +307,9 @@ public:
 				Vector kdcolor = color.Vsca(ln).Vmul(CtoV(triangle.kd)).max0();
 				Vector kscolor = color.Vsca(max(pow(r.Vdot(v),p),zero)).Vmul(ks);
 				Vector kacolor = color.Vmul(ka).max0();
-				KA.Vadd(kacolor);
-				KS.Vadd(kscolor);
-				KD.Vadd(kdcolor);
+				KA = KA + kacolor;
+				KS = KS + kscolor;
+				KD = KD + kdcolor;
 			}
 		}
 		Vector re = reflection(ray.getDir(), n);
@@ -303,7 +321,7 @@ public:
 
 	bool shadowpounce(Vector point, Light light) {
 		Vector shadow = light.shadowVector(point);
-		Ray shadowray = Ray(point, shadow, 0.1);
+		Ray shadowray = Ray(point, shadow, 1);
 		float t;
 		int num = spheres.getLength();
 		for(int i = 0; i < num; i++) {

@@ -5,7 +5,7 @@
 #include <vector>
 using namespace std;
 
-float width = 600, height = 600;
+float width = 700, height = 700;
 Vector UL, UR, LL, LR;
 Raytracer raytracer = Raytracer();
 /*Triangle c1 = Triangle(Vector (0, 1, 3), Vector(0, 0, 3), Vector(1, 1, 3), Color(0, 0, 1));
@@ -57,11 +57,11 @@ public:
 		FreeImage_Initialise();
 		FIBITMAP* film = FreeImage_Allocate(width, height, 24);
 		RGBQUAD color;
-		for(int i = 1; i <= R; i++) {
+		for(int i = 0; i < R; i++) {
 			for(int k = 0; k < C; k++) {
-				color.rgbRed = pixels[R-i][k].r*255;
-				color.rgbGreen = pixels[R-i][k].g*255;
-				color.rgbBlue = pixels[R-i][k].b*255;
+				color.rgbRed = pixels[i][k].r*255;
+				color.rgbGreen = pixels[i][k].g*255;
+				color.rgbBlue = pixels[i][k].b*255;
 				FreeImage_SetPixelColor(film, k, i-1, &color);
 			}
 		}
@@ -117,11 +117,11 @@ int main(int argc, char** argv)
 	LR  = Vector( 1, -1, 1);
 	LL  = Vector(-1, -1, 1);
 	Image screen = Image(width, height);
-	Sphere sphere = Sphere(Vector(0, 0, 2), 1);
+	Sphere sphere = Sphere(Vector(0, 0, 10), 3);
 	raytracer.registerShape(sphere);
 	//Triangle triangle = Triangle (Vector (0, 1, 3), Vector(1, 0, 3), Vector(-1, 0, 3));
 	//raytracer.registerShape(triangle);
-	Light light = Light(-2, 2, 2, 1, 1, 0);
+	Light light = Light(0,-10,10,1,1,0);
 	raytracer.registerLight(light);
 
 	for(float k = 0; k < height; k++) {

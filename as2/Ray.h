@@ -48,6 +48,10 @@ public:
 
 	}
 
+	Vector operator*(Vector mul) {
+		return Vector(x * mul.x, y * mul.y, z * mul.z);
+	}
+
 	Vector Vadd(Vector add) {
 		float* C = add.getCoors();
 		Vector result = Vector(x + C[0], y + C[1], z + C[2]);
@@ -177,7 +181,7 @@ public:
 			free(coors);
 			return result;
 		}
-		Vector result = point.Vsub(position).Vnor();
+		Vector result = position.Vsub(point).Vnor();
 		return result;
 	}
 
