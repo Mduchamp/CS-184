@@ -236,6 +236,10 @@ public:
         //Vector jorm = myNorm.Vnor();
         //std::cout << jorm.getCoors()[2];
         //intersect->setNormal(jorm);
+       	if (*t_hit <= k.getmin() || *t_hit >= k.getmax())
+       	{
+       		return false;
+       	}
     	return true;                       // I is in T
 	}
 
