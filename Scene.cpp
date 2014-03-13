@@ -109,27 +109,60 @@ bool intersect_search(Ray ray, Triangle* trig, int nTriangles, PoI* poi)
 
 void readObj()
 {
-	string line;
-  	ifstream myfile ("obj/cube.obj");
+	string line, temp;
+	float int1, int2, int3;
+	int tri1, tri2, tri3, nor;
+	std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
+	std::vector< Vector > temp_vertices;
+	std::vector< Triangle > temp_triangles;
+	std::vector< Vector > temp_normals;	
+
+	ifstream myfile2 ("obj/cube.obj");
   	//copied basics from http://stackoverflow.com/questions/4263837/what-is-the-content-of-obj-file
-  	if (myfile.is_open())
+  	if (myfile2.is_open())
   	{
-    	while (!myfile.eof() )
+    	while (!myfile2.eof() )
     	{
-      		getline (myfile,line);
+      		getline (myfile2,line);
       		if (line[0] == 118 && line[1] == 32){
-      			cout << line << endl;
+      			temp = line.substr(2,6);
+      			int1 = atof(temp.c_str());
+      			temp = line.substr(7,11);
+      			int2 = atof(temp.c_str());
+      			temp = line.substr(12,16);
+      			int3 = atof(temp.c_str());
+				Vector myV = Vector(int1, int2, int3);
+				temp_vertices.push_back(myV);
       		}
-      		else if (line[0] == 118 && line[1] == 32){
-      			cout << line << endl;
+      		else if (line[0] == 118 && line[1] == 110){
+      			temp = line.substr(3,7);
+      			int1 = atof(temp.c_str());
+      			temp = line.substr(8,12);
+      			int2 = atof(temp.c_str());
+      			temp = line.substr(13,17);
+      			int3 = atof(temp.c_str());
+      			Vector myV = Vector(int1, int2, int3);
+				temp_normals.push_back(myV);
       		}
-      		else if (line[0] == 118 && line[1] == 32){
-      			cout << line << endl;
+      		else if (line[0] == 102 && line[1] == 32){
+      			temp = line.substr(2,4);
+      			tri1 = atof(temp.c_str());
+      			temp = line.substr(8,10);
+      			tri2 = atof(temp.c_str());
+      			temp = line.substr(14,16);
+      			tri3 = atof(temp.c_str());
+      			temp = line.substr(6,8);
+      			nor = atof(temp.c_str());
+      			Triangle myT = Triangle(temp_vertices[tri1], temp_vertices[tri2], temp_vertices[tri3]);
+      			myT.setNormal(temp_normals[nor]);
+      			temp_triangles.push_back(myT);
       		}
     	}
-    	myfile.close();
+    	myfile2.close();
   	}
 	else cout << "Unable to open file"; 
+
+
 }
 
 int main(int argc, char** argv)

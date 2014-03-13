@@ -143,6 +143,7 @@ public:
 class Triangle// : public Shape
 {
 	Vector p1, p2, p3;
+	Vector normal;
 public:
 	Color kd;
 	Triangle(Vector vertex1, Vector vertex2, Vector vertex3, Color _kd = Color(0.5, 0.5, 0.5)) {
@@ -150,15 +151,30 @@ public:
 		p1 = vertex1;
 		p2 = vertex2;
 		p3 = vertex3;
+		normal = Vector(-999, -999, -999);
 	}
+
+	void setNormal(Vector mynor)
+	{
+		normal = mynor;
+	}
+
 	//function assumes that it's a valid coordinate
 	Vector getNormal(Vector intercept = Vector(0, 0, 0))
 	{
+		if (normal.getCoors()[0] != -999)
+		{
+			return normal;
+		}
 		return (p1 - p2).Vcrs(p3 - p2);
 	}
 
 	Vector getNormal(Vector* intercept)
 	{
+		if (normal.getCoors()[0] != -999)
+		{
+			return normal;
+		}
 		return (p1 - p2).Vcrs(p3 - p2);
 	}
 
