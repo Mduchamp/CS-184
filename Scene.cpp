@@ -161,13 +161,11 @@ void readObj()
     	myfile2.close();
   	}
 	else cout << "Unable to open file"; 
-
-
 }
 
 int main(int argc, char** argv)
 {
-	readObj();
+	//readObj();
 	Color color;
 	float zpf = 0.5; //primitive is double, causes problems
 	Camera cam = Camera();
@@ -198,7 +196,7 @@ int main(int argc, char** argv)
 			bool gotHit = triangle.hit(ray, &intersect);
 			gotHit = gotHit || sphere.hit(ray, &intersect);*/
 
-			Color color = raytracer.trace(ray, 1);
+			//Color color = raytracer.trace(ray, 1);
 			/*if (gotHit)
 			{
 				color = poi.getColor();

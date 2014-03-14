@@ -1,6 +1,7 @@
 #include "Ray.h"
 #include <stdio.h>
 #include <iostream>
+#include <math.h> 
 
 /*class Shape 
 {
@@ -154,6 +155,39 @@ public:
 		normal = Vector(-999, -999, -999);
 	}
 
+	//e.g. 2, 2, 1
+	void scale(int scalex, int scaley, int scalez)	
+	{
+		p1 = Vector(p1.getCoors()[0] * scalex, p1.getCoors()[1] * scaley, p1.getCoors()[2] * scalez);
+		p2 = Vector(p2.getCoors()[0] * scalex, p2.getCoors()[1] * scaley, p2.getCoors()[2] * scalez);
+		p3 = Vector(p3.getCoors()[0] * scalex, p3.getCoors()[1] * scaley, p3.getCoors()[2] * scalez);
+	}
+
+	//e.g. 1, -1, 1 --> reflection by y axis
+	void reflection(int scalex, int scaley, int scalez)
+	{
+		p1 = Vector(p1.getCoors()[0] * scalex, p1.getCoors()[1] * scaley, p1.getCoors()[2] * scalez);
+		p2 = Vector(p2.getCoors()[0] * scalex, p2.getCoors()[1] * scaley, p2.getCoors()[2] * scalez);
+		p3 = Vector(p3.getCoors()[0] * scalex, p3.getCoors()[1] * scaley, p3.getCoors()[2] * scalez);
+	}
+
+	//e.g. 1, 0
+	void shear(int m1, int m2)
+	{
+		p1 = Vector(p1.getCoors()[0] + m1 * p1.getCoors()[1], p1.getCoors()[1] + p1.getCoors()[0] * m2, p1.getCoors()[2]);
+		p2 = Vector(p2.getCoors()[0] + m1 * p2.getCoors()[1], p2.getCoors()[1] + p2.getCoors()[0] * m2, p2.getCoors()[2]);
+		p3 = Vector(p3.getCoors()[0] + m1 * p3.getCoors()[1], p3.getCoors()[1] + p3.getCoors()[0] * m2, p3.getCoors()[2]);
+	}
+
+	//e.g. 30
+	void rotate(int theta)
+	{
+		double k = cos(60.0);
+		p1 = Vector(p1.getCoors()[0] * cos ( theta * 3.141593 / 180.0 ) - p1.getCoors()[1] * sin ( theta * 3.141593 / 180.0 ), p1.getCoors()[0] * sin ( theta * 3.141593 / 180.0 ) + p1.getCoors()[1] * cos ( theta * 3.141593 / 180.0 ), p1.getCoors()[2]);
+		p2 = Vector(p2.getCoors()[0] * cos ( theta * 3.141593 / 180.0 ) - p2.getCoors()[1] * sin ( theta * 3.141593 / 180.0 ), p2.getCoors()[0] * sin ( theta * 3.141593 / 180.0 ) + p2.getCoors()[1] * cos ( theta * 3.141593 / 180.0 ), p2.getCoors()[2]);
+		p3 = Vector(p3.getCoors()[0] * cos ( theta * 3.141593 / 180.0 ) - p3.getCoors()[1] * sin ( theta * 3.141593 / 180.0 ), p3.getCoors()[0] * sin ( theta * 3.141593 / 180.0 ) + p3.getCoors()[1] * cos ( theta * 3.141593 / 180.0 ), p3.getCoors()[2]);
+	}
+
 	void setNormal(Vector mynor)
 	{
 		normal = mynor;
@@ -258,8 +292,6 @@ public:
        	}
     	return true;                       // I is in T
 	}
-
-
 };
 
 
