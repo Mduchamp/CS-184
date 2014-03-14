@@ -1,20 +1,12 @@
 #include <stdlib.h>
 #include <math.h>
 
-float max(float a, float b) { //why doesn't the standard function work?
-	if(a >= b) {
-		return a;
-	}
-	return b;
-}
-
 class Vector
 {
 public:
 	float x;
 	float y;
 	float z;
-
 	Vector(float a = 0, float b = 0, float c = 0) {
 		x = a;
 		y = b;
@@ -48,10 +40,6 @@ public:
 
 	}
 
-	Vector operator*(Vector mul) {
-		return Vector(x * mul.x, y * mul.y, z * mul.z);
-	}
-
 	Vector Vadd(Vector add) {
 		float* C = add.getCoors();
 		Vector result = Vector(x + C[0], y + C[1], z + C[2]);
@@ -63,11 +51,6 @@ public:
 		float* C = sub.getCoors();
 		Vector result = Vector(x - C[0], y - C[1], z - C[2]);
 		free(C);
-		return result;
-	}
-
-	Vector Vmul(Vector mul) {
-		Vector result = (x * mul.x, y * mul.y, z * mul.z);
 		return result;
 	}
 
@@ -123,10 +106,6 @@ public:
 		return (float)sqrt(x*x + y*y + z*z);
 	}
 
-	Vector max0() {
-		float zero = 0;
-		return Vector(max(x, zero), max(y, zero), max(z, zero));
-	}
 };
 
 class Color
@@ -135,61 +114,35 @@ public:
 	float r;
 	float g;
 	float b;
+
 	Color(float x = 0, float y = 0, float z = 0) {
 		r = x;
 		g = y;
 		b = z;
 	}
-
-	Color operator*(float scale) {
-		return Color(r*scale, g*scale, b*scale);
-	}
-
-	Color operator*(Color color) {
-		return Color(r*color.r, g*color.g, b*color.b);
-	}
-
 };
 
 class Light
 {
-public:
 	Vector position;
 	Color color;
 	bool type;
 
-	Light(float _x = 0, float _y = 0, float _z = 0, float _r = 0, float _g = 0, float _b = 0, bool direct = false) {
-		position = Vector(_x, _y, _z);
-		color = Color(_r, _g, _b);
+public:
+	Light(float a = 0, float b = 0, float c = 0, float d = 0, float e = 0, float f = 0, bool direct = false) {
+		position = Vector(a, b, c);
+		color = Color(d, e, f);
 		type = direct;
-	}
-
-	Vector getPosition()
-	{
-		return position;
-	}
-
-	Color getColor()
-	{
-		return color;
 	}
 
 	Vector lightVector(Vector point) {
 		if(type) {
 			float* coors = position.getCoors();
-			Vector result = Vector(coors[0], coors[1], coors[2]).Vnor();
+			Vector result = Vector(coors[0], coors[1], coors[2]);
 			free(coors);
 			return result;
 		}
-		Vector result = position.Vsub(point).Vnor();
-		return result;
-	}
-
-	Vector shadowVector(Vector point) {
-		if(type) {
-			return position.Vsca(-1).Vnor();
-		}
-		Vector result = position.Vsub(point).Vnor();
+		Vector result = point.Vsub(position);
 		return result;
 	}
 };
@@ -202,28 +155,18 @@ class Ray
 	float maxt;
 
 public:
-	Ray(float x, float y, float z, Vector dir, float min = 0, float max = 100) {
+	Ray(float x, float y, float z, Vector dir, float max = 1000, float min = 0) {
 		origin = Vector(x, y, z);
 		direction = dir;
-		mint = min;
 		maxt = max;
+		mint = min;
 	}
 
-	Ray(Vector ori, Vector dir, float min = 0, float max = 100) {
+	Ray(Vector ori, Vector dir, float max = 1000, float min = 0) {
 		origin = ori;
 		direction = dir;
-		mint = min;
 		maxt = max;
-	}
-
-	float getmin()
-	{
-		return mint;
-	}
-
-	float getmax()
-	{
-		return maxt;
+		mint = min;
 	}
 
 	float getMag(){
@@ -246,79 +189,8 @@ public:
 
 	float* getT() {
 		float* result = (float *) malloc(2*sizeof(float));
-		result[0] = mint;
-		result[1] = maxt;
+		result[0] = maxt;
+		result[1] = mint;
 		return result;
 	}
 };
-
-class PoI
-{
-	Vector collision;
-	Vector normal;
-	Color kd;
-public:
-	PoI()
-	{
-
-	}
-	PoI(Vector c, Vector n) {
-		collision = c;
-		normal = n;
-	}
-
-	Color shade(Light l)
-	{
-		Vector light_dir = l.getPosition() - collision;
-		light_dir = light_dir.Vnor();
-		float ndl = light_dir.Vdot(normal);
-		if (ndl < 0)
-		{
-			ndl = 0;
-		}
-		return (kd * l.getColor()) * ndl; 
-	}
-
-	void setColor(Color k)
-	{
-		kd = k;
-	}
-
-	Color getColor()
-	{
-		return kd;
-	}
-
-	void setCollision(Vector c)
-	{
-		collision = c;
-	}
-
-	void setNormal(Vector n)
-	{
-		normal = n;
-	}
-
-	Vector getCollision()
-	{
-		return collision;
-	}
-
-	Vector getNormal()
-	{
-		return normal;
-	}
-};
-
-
-Color VtoC(Vector vector) {
-	float* C = vector.getCoors();
-	Color result = Color(C[0], C[1], C[2]);
-	free(C);
-	return result;
-}
-
-Vector CtoV(Color color) {
-	return Vector(color.r, color.g, color.b);
-}
-//use above two functions at own risk!
