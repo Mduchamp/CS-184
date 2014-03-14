@@ -171,6 +171,13 @@ public:
 	Color max0() {
 		return Color(max(r,0), max(g,0), max(b,0));
 	}
+
+	Color nor() {
+		float norm = sqrt(pow(r, 2) + pow(g,2) + pow(b,2));
+		Color result = Color(r / norm, g / norm, b / norm);
+		return result;
+	}
+
 };
 
 class Light

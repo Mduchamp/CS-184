@@ -261,53 +261,38 @@ public:
 	}
 
 	Color Phong(Vector point, Vector norm, Ray ray, Sphere sphere, int recurse) {
-		//printf("In phong.\n");
 		float zero = 0; //primitive is int, causes problems
 		int num = lights.getLength();
 		Color KA = Color(0, 0, 0);
 		Color KD = Color(0, 0, 0);
 		Color KS = Color(0, 0, 0);
 		Vector n = norm.Vnor();
-		Vector v = ray.getDir().Vsca(-1);
-		//printf("checking lights.\n");
+		Vector v = ray.getDir();
 		for(int i = 0; i < num; i++) {
 			Light light = lights.get(i);
 			Color color = light.color;
-			//printf("light color is: %f, %f, %f\n", color.r, color.g, color.b);
-			Color kacolor = (color * ka).max0();
-			/*printf("ka is: %f, %f, %f\n", ka.r, ka.g, ka.b);
-			printf("kacolor is: %f, %f, %f\n",kacolor.r, kacolor.g, kacolor.b);*/
-			KA = KA + kacolor;
-			/*printf("point is: %f, %f, %f\n",point.x, point.y, point.z);
-			printf("checking shadows.\n");*/
+			//Color kacolor = (color * ka).max0().nor();
+			//KA = KA + kacolor;
 			if(!shadowpounce(point, light)) {
-				//printf("it wasn't in shadow.\n");
 				Vector l = light.lightVector(point);
-				Vector r = reflection(l, n).Vnor();
+				Vector r = reflection(l, n);
 				float ln = l.Vdot(n);
-				float rv = r.Vdot(v);
-				Color kdcolor = color * ln * sphere.kd;
-				Color kscolor = color * max(pow(rv,p),zero) * ks;
+				float rv = max(r.Vdot(v),0);
+				printf("rv: %f\n",rv);
+				//Color kdcolor = (color * ln * sphere.kd).max0();
+				Color kscolor = ((color * pow(rv,p) * ks).max0());
+				printf("kscolor: %f, %f, %f\n",kscolor.r, kscolor.g, kscolor.b);
 				KS = KS + kscolor;
-				KD = KD + kdcolor;
-				if(point.y > 0) {
-				printf("color: %f, %f, %f\n", color.r, color.g, color.b);
-				printf("sphere kd: %f, %f, %f\n", sphere.kd.r, sphere.kd.g, sphere.kd.b);
-				printf("ln: %f\n", ln);
-				printf("kdcolor: %f, %f, %f\n", kdcolor.r, kdcolor.g, kdcolor.b);
-				}
+				//KD = KD + kdcolor;
 			}
 		}
 		Vector re = reflection(ray.getDir(), n).Vnor();
 		Ray reflect = Ray(point, re, 0.1);
-		//printf("bouncing\n");
 		Color KR = trace(reflect, recurse-1) * kr; //the recursive call
 		Color result = KA + KS + KD + KR;
-		//if(result.r > 0.1 || result.g > 0.1 || result.b > 0.1) {
-			//printf("result color: %f, %f, %f\n", result.r, result.g, result.b);
-		//}
 		return result;
 	}
+
 
 	Color Phong(Vector point, Vector norm, Ray ray, Triangle triangle, int recurse) {
 		float zero = 0; //primitive is int, causes problems
