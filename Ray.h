@@ -206,13 +206,12 @@ public:
 	Vector lightVector(Vector point) {
 		if(type) {
 			float* coors = position.getCoors();
-			Vector result = Vector(coors[0], coors[1], coors[2]).Vnor();
+			Vector result = Vector(coors[0], coors[1], coors[2]);
 			free(coors);
-			return result;
+			return result.Vnor();
 		}
-		Vector result = point.Vsub(position).Vnor();
+		Vector result = position.Vsub(point).Vnor();
 		return result;
-	}
 
 	Vector shadowVector(Vector point) {
 		if(type) {
