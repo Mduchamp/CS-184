@@ -9,17 +9,17 @@ using namespace std;
 
 float width = 700, height = 700;
 Vector UL, UR, LL, LR;
-Raytracer raytracer = Raytracer();
+Raytracer raytracer;
 /*Triangle c1 = Triangle(Vector (0, 1, 3), Vector(0, 0, 3), Vector(1, 1, 3), Color(0, 0, 1));
 Triangle c2 = Triangle(Vector(0, 0, 3), Vector (1, 0, 3), Vector(1, 1, 3), Color(0, 0, 1));
 Triangle c3 = Triangle(Vector (0, 1, 2), Vector(0, 0, 2), Vector(1, 1, 2), Color(0, 1, 0));
 Triangle c4 = Triangle(Vector(0, 0, 2), Vector (1, 0, 2), Vector(1, 1, 2), Color(0, 1, 0));
-*/
+
 Triangle t1 = Triangle (Vector (0, 1, 3.3), Vector(1, 0, 3.3), Vector(-1, 0, 3.3), Color(0, 0, 1));
 Triangle t2 = Triangle (Vector (0, 1.6, 3), Vector(1, 0.8, 3), Vector(-1, 0.8, 3), Color(0, 1, 0));
 Triangle t3 = Triangle (Vector (0, 0.5, 2.8), Vector(1, -0.5, 2.8), Vector(-1, -0.5, 2.8), Color(1, 0, 0));
 Triangle triangles[3] = {t1, t2, t3};
-Light light = Light(0.5, 0.5, 0.5, 0.5, 0.5, 0.5,false);
+Light light = Light(0.5, 0.5, 0.5, 0.5, 0.5, 0.5,false);*/
 //std::vector <Triangle> triangles;
 //triangles.push_back(t1);
 
@@ -57,7 +57,7 @@ public:
 
 	void flush() {
 		FreeImage_Initialise();
-		FIBITMAP* film = FreeImage_Allocate(width, height, 24);
+		FIBITMAP* film = FreeImage_Allocate(R, C, 24);
 		RGBQUAD color;
 		for(int i = 0; i < R; i++) {
 			for(int k = 0; k < C; k++) {
@@ -107,6 +107,7 @@ bool intersect_search(Ray ray, Triangle* trig, int nTriangles, PoI* poi)
 	return false;
 }
 
+
 void readObj()
 {
 	string line, temp;
@@ -154,7 +155,7 @@ void readObj()
       			temp = line.substr(6,8);
       			nor = atof(temp.c_str());
       			Triangle myT = Triangle(temp_vertices[tri1], temp_vertices[tri2], temp_vertices[tri3]);
-      			myT.setNormal(temp_normals[nor]);
+      			//myT.setNormal(temp_normals[nor]);
       			temp_triangles.push_back(myT);
       		}
     	}
@@ -165,10 +166,12 @@ void readObj()
 
 int main(int argc, char** argv)
 {
-	//readObj();
 	Color color;
 	float zpf = 0.5; //primitive is double, causes problems
+	float zpt = 0.25;
+	float zps = 0.75;
 	Camera cam = Camera();
+	raytracer = Raytracer();
 	cam.eye = Vector(0, 0, 0);
 	UL  = Vector(-1,  1, 1);
 	UR  = Vector( 1,  1, 1);
@@ -196,7 +199,55 @@ int main(int argc, char** argv)
 			bool gotHit = triangle.hit(ray, &intersect);
 			gotHit = gotHit || sphere.hit(ray, &intersect);*/
 
-			//Color color = raytracer.trace(ray, 1);
+			Color color1 = raytracer.trace(ray, 1);
+
+			/*u = (i + 2*zpt) / width;
+			v = (k + zpt) / height;
+			dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
+			ray = Ray(cam.eye, dir);
+			Color color2 = raytracer.trace(ray, 1);
+
+			u = (i + 3*zpt) / width;
+			v = (k + zpt) / height;
+			dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
+			ray = Ray(cam.eye, dir);
+			Color color3 = raytracer.trace(ray, 1);
+
+			u = (i + zpt) / width;
+			v = (k + 2*zpt) / height;
+			dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
+			ray = Ray(cam.eye, dir);
+			Color color4 = raytracer.trace(ray, 1);
+
+			u = (i + zpt) / width;
+			v = (k + 3*zpt) / height;
+			dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
+			ray = Ray(cam.eye, dir);
+			Color color5 = raytracer.trace(ray, 1);
+
+			u = (i + 2*zpt) / width;
+			v = (k + 2*zpt) / height;
+			dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
+			ray = Ray(cam.eye, dir);
+			Color color6 = raytracer.trace(ray, 1);
+
+			u = (i + 2*zpt) / width;
+			v = (k + 3*zpt) / height;
+			dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
+			ray = Ray(cam.eye, dir);
+			Color color7 = raytracer.trace(ray, 1);
+
+			u = (i + 3*zpt) / width;
+			v = (k + 2*zpt) / height;
+			dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
+			ray = Ray(cam.eye, dir);
+			Color color8 = raytracer.trace(ray, 1);
+
+			u = (i + 3*zpt) / width;
+			v = (k + 3*zpt) / height;
+			dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
+			ray = Ray(cam.eye, dir);
+			Color color9 = raytracer.trace(ray, 1);*/
 			/*if (gotHit)
 			{
 				color = poi.getColor();
@@ -211,7 +262,8 @@ int main(int argc, char** argv)
 			{
 				color = Color(0, 0, 0);
 			}*/
-			if(!screen.setPixel(k, i, color)) {
+			//color = VtoC((CtoV(color1).Vadd(CtoV(color2)).Vadd(CtoV(color3)).Vadd(CtoV(color4)).Vadd(CtoV(color5)).Vadd(CtoV(color6)).Vadd(CtoV(color7)).Vadd(CtoV(color8)).Vadd(CtoV(color9))).Vdiv(9));
+			if(!screen.setPixel(k, i, color1)) {
 				printf("There was a problem!\n");
 			}
 		}

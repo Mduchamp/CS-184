@@ -127,6 +127,13 @@ public:
 		float zero = 0;
 		return Vector(max(x, zero), max(y, zero), max(z, zero));
 	}
+
+	bool equals(Vector same) {
+		if(x == same.x && y == same.y && z == same.z) {
+			return true;
+		}
+		return false;
+	}
 };
 
 class Color
@@ -159,6 +166,10 @@ public:
 
 	Color operator/(float div) {
 		return Color(r/div, g/div, b/div);
+	}
+
+	Color max0() {
+		return Color(max(r,0), max(g,0), max(b,0));
 	}
 };
 
