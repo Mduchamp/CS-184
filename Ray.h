@@ -178,6 +178,9 @@ public:
 		return result;
 	}
 
+	Color asv() {
+		return Color(abs(r), abs(g),abs(b));
+	}
 };
 
 class Light
@@ -212,12 +215,13 @@ public:
 		}
 		Vector result = position.Vsub(point).Vnor();
 		return result;
+	}
 
 	Vector shadowVector(Vector point) {
 		if(type) {
 			return position.Vsca(-1).Vnor();
 		}
-		Vector result = position.Vsub(point).Vnor();
+		Vector result = point.Vsub(position).Vnor();
 		return result;
 	}
 };

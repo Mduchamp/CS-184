@@ -267,23 +267,23 @@ public:
 		Color KD = Color(0, 0, 0);
 		Color KS = Color(0, 0, 0);
 		Vector n = norm.Vnor();
-		Vector v = ray.getDir();
+		Vector v = ray.getDir().Vsca(-1);
 		for(int i = 0; i < num; i++) {
 			Light light = lights.get(i);
 			Color color = light.color;
-			//Color kacolor = (color * ka).max0().nor();
-			//KA = KA + kacolor;
+			Color kacolor = (color * ka).max0();
+			KA = KA + kacolor;
 			if(!shadowpounce(point, light)) {
 				Vector l = light.lightVector(point);
 				Vector r = reflection(l, n);
 				float ln = l.Vdot(n);
-				float rv = max(r.Vdot(v),0);
-				printf("rv: %f\n",rv);
-				//Color kdcolor = (color * ln * sphere.kd).max0();
-				Color kscolor = ((color * pow(rv,p) * ks).max0());
-				printf("kscolor: %f, %f, %f\n",kscolor.r, kscolor.g, kscolor.b);
+				float rv = r.Vdot(v);
+				//printf("rv: %f\n",rv);
+				Color kdcolor = (color * ln * sphere.kd).max0();
+				Color kscolor = ((color * max(pow(abs(rv),p),zero)) * ks).asv();
+				//printf("kscolor: %f, %f, %f\n",kscolor.r, kscolor.g, kscolor.b);
 				KS = KS + kscolor;
-				//KD = KD + kdcolor;
+				KD = KD + kdcolor;
 			}
 		}
 		Vector re = reflection(ray.getDir(), n).Vnor();
@@ -292,7 +292,6 @@ public:
 		Color result = KA + KS + KD + KR;
 		return result;
 	}
-
 
 	Color Phong(Vector point, Vector norm, Ray ray, Triangle triangle, int recurse) {
 		float zero = 0; //primitive is int, causes problems
@@ -306,12 +305,12 @@ public:
 			Light light = lights.get(i);
 			if(!shadowpounce(point, light)) {
 				Vector l = light.lightVector(point);
-				Vector r = reflection(l, n).Vnor();
+				Vector r = reflection(l, n);
 				float ln = l.Vdot(n);
 				float rv = r.Vdot(v);
 				Color color = light.color;
 				Color kdcolor = color * ln * triangle.kd;
-				Color kscolor = color * max(pow(rv,p),zero) * ks;
+				Color kscolor = color * pow(rv,p) * ks;
 				Color kacolor = color * ka;
 				KA = KA + kacolor;
 				KS = KS + kscolor;
@@ -327,19 +326,14 @@ public:
 
 	bool shadowpounce(Vector point, Light light) {
 		//printf("shadowpounce!\n");
-		Vector point2;
 		Vector shadow = light.shadowVector(point);
 		float dist = point.getDistance(light.getPosition());
-		Ray shadowray = Ray(light.getPosition(), shadow, 0, dist);
-		float t;
+		Ray shadowray = Ray(light.getPosition(), shadow, 0, dist-1);
+		float t  = -1;
 		int num = spheres.getLength();
 		for(int i = 0; i < num; i++) {
 			Sphere x = spheres.get(i);
 			if(x.hit(shadowray, &t)) {
-				point2 = point.Vadd(shadowray.getDir().Vsca(t));
-				if(point2.equals(point)) {
-					return false;
-				}
 				return true;
 			}
 		}
@@ -347,11 +341,6 @@ public:
 		for(int i = 0; i < num; i++) {
 			Triangle y = triangles.get(i);
 			if(y.hit(shadowray, &t)) {
-				point2 = point.Vadd(shadowray.getDir().Vsca(t));
-				if(point2.equals(point)) {
-					return false;
-				}
-				//printf("shadow ray hit\n");
 				return true;
 			}
 		}
@@ -359,6 +348,11 @@ public:
 	}
 
 	Vector reflection(Vector vector, Vector norm) {
-		return vector.Vsub((norm.Vsca(vector.Vdot(norm))).Vsca(2));
+		Vector dln = vector.Vdot(norm);
+		Vector sn = dln.Vmul(norm);
+		Vector tn = sn.Vsca(2);
+		Vector r = tn.Vsub(vector);
+		return r;
+		
 	}
 };

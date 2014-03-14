@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-#include <fstream>
-#include <string>
 using namespace std;
 
 float width = 700, height = 700;
@@ -25,6 +23,10 @@ Light light = Light(0.5, 0.5, 0.5, 0.5, 0.5, 0.5,false);*/
 
 struct Camera {
 	Vector eye;
+
+	Camera(Vector e = Vector(0,0,0)) {
+		eye = e;
+	}
 };
 
 class Image 
@@ -108,62 +110,6 @@ bool intersect_search(Ray ray, Triangle* trig, int nTriangles, PoI* poi)
 }
 
 
-void readObj()
-{
-	string line, temp;
-	float int1, int2, int3;
-	int tri1, tri2, tri3, nor;
-	std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
-	std::vector< Vector > temp_vertices;
-	std::vector< Triangle > temp_triangles;
-	std::vector< Vector > temp_normals;	
-
-	ifstream myfile2 ("obj/cube.obj");
-  	//copied basics from http://stackoverflow.com/questions/4263837/what-is-the-content-of-obj-file
-  	if (myfile2.is_open())
-  	{
-    	while (!myfile2.eof() )
-    	{
-      		getline (myfile2,line);
-      		if (line[0] == 118 && line[1] == 32){
-      			temp = line.substr(2,6);
-      			int1 = atof(temp.c_str());
-      			temp = line.substr(7,11);
-      			int2 = atof(temp.c_str());
-      			temp = line.substr(12,16);
-      			int3 = atof(temp.c_str());
-				Vector myV = Vector(int1, int2, int3);
-				temp_vertices.push_back(myV);
-      		}
-      		else if (line[0] == 118 && line[1] == 110){
-      			temp = line.substr(3,7);
-      			int1 = atof(temp.c_str());
-      			temp = line.substr(8,12);
-      			int2 = atof(temp.c_str());
-      			temp = line.substr(13,17);
-      			int3 = atof(temp.c_str());
-      			Vector myV = Vector(int1, int2, int3);
-				temp_normals.push_back(myV);
-      		}
-      		else if (line[0] == 102 && line[1] == 32){
-      			temp = line.substr(2,4);
-      			tri1 = atof(temp.c_str());
-      			temp = line.substr(8,10);
-      			tri2 = atof(temp.c_str());
-      			temp = line.substr(14,16);
-      			tri3 = atof(temp.c_str());
-      			temp = line.substr(6,8);
-      			nor = atof(temp.c_str());
-      			Triangle myT = Triangle(temp_vertices[tri1], temp_vertices[tri2], temp_vertices[tri3]);
-      			//myT.setNormal(temp_normals[nor]);
-      			temp_triangles.push_back(myT);
-      		}
-    	}
-    	myfile2.close();
-  	}
-	else cout << "Unable to open file"; 
-}
-
 int main(int argc, char** argv)
 {
 	Color color;
@@ -171,8 +117,7 @@ int main(int argc, char** argv)
 	float zpt = 0.25;
 	float zps = 0.75;
 	Camera cam = Camera();
-	raytracer = Raytracer();
-	cam.eye = Vector(0, 0, 0);
+	raytracer = Raytracer(cam.eye, 16, Color(0.8,0.8,0.8), Color(0.1,0.1,0.1));
 	UL  = Vector(-1,  1, 1);
 	UR  = Vector( 1,  1, 1);
 	LR  = Vector( 1, -1, 1);
@@ -180,9 +125,11 @@ int main(int argc, char** argv)
 	Image screen = Image(width, height);
 	Sphere sphere = Sphere(Vector(0, 0, 10), 3);
 	raytracer.registerShape(sphere);
+	Sphere sphere2 = Sphere(Vector(4,0,8),1);
+	raytracer.registerShape(sphere2);
 	//Triangle triangle = Triangle (Vector (0, 1, 3), Vector(1, 0, 3), Vector(-1, 0, 3));
 	//raytracer.registerShape(triangle);
-	Light light = Light(0,-10,10,1,1,0);
+	Light light = Light(10,0,7,1,1,0);
 	raytracer.registerLight(light);
 
 	for(float k = 0; k < height; k++) {
