@@ -123,13 +123,13 @@ int main(int argc, char** argv)
 	LR  = Vector( 1, -1, 1);
 	LL  = Vector(-1, -1, 1);
 	Image screen = Image(width, height);
-	Sphere sphere = Sphere(Vector(0, 0, 10), 3);
+	Sphere sphere = Sphere(Vector(0, 0, 10), 3, Color(1,0,0));
 	raytracer.registerShape(sphere);
-	Sphere sphere2 = Sphere(Vector(4,0,8),1);
+	Sphere sphere2 = Sphere(Vector(5, 0, 11), 1, Color(0,1,0));
 	raytracer.registerShape(sphere2);
 	//Triangle triangle = Triangle (Vector (0, 1, 3), Vector(1, 0, 3), Vector(-1, 0, 3));
 	//raytracer.registerShape(triangle);
-	Light light = Light(10,0,7,1,1,0);
+	Light light = Light(-3,0,1,1,1,1);
 	raytracer.registerLight(light);
 
 	for(float k = 0; k < height; k++) {
@@ -148,7 +148,7 @@ int main(int argc, char** argv)
 
 			Color color1 = raytracer.trace(ray, 1);
 
-			/*u = (i + 2*zpt) / width;
+			u = (i + 2*zpt) / width;
 			v = (k + zpt) / height;
 			dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
 			ray = Ray(cam.eye, dir);
@@ -194,7 +194,7 @@ int main(int argc, char** argv)
 			v = (k + 3*zpt) / height;
 			dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
 			ray = Ray(cam.eye, dir);
-			Color color9 = raytracer.trace(ray, 1);*/
+			Color color9 = raytracer.trace(ray, 1);
 			/*if (gotHit)
 			{
 				color = poi.getColor();
@@ -209,8 +209,8 @@ int main(int argc, char** argv)
 			{
 				color = Color(0, 0, 0);
 			}*/
-			//color = VtoC((CtoV(color1).Vadd(CtoV(color2)).Vadd(CtoV(color3)).Vadd(CtoV(color4)).Vadd(CtoV(color5)).Vadd(CtoV(color6)).Vadd(CtoV(color7)).Vadd(CtoV(color8)).Vadd(CtoV(color9))).Vdiv(9));
-			if(!screen.setPixel(k, i, color1)) {
+			color = VtoC((CtoV(color1).Vadd(CtoV(color2)).Vadd(CtoV(color3)).Vadd(CtoV(color4)).Vadd(CtoV(color5)).Vadd(CtoV(color6)).Vadd(CtoV(color7)).Vadd(CtoV(color8)).Vadd(CtoV(color9))).Vdiv(9));
+			if(!screen.setPixel(k, i, color)) {
 				printf("There was a problem!\n");
 			}
 		}

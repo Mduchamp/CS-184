@@ -275,12 +275,12 @@ public:
 			KA = KA + kacolor;
 			if(!shadowpounce(point, light)) {
 				Vector l = light.lightVector(point);
-				Vector r = reflection(l, n);
+				Vector r = reflection(l, n).Vnor();
 				float ln = l.Vdot(n);
 				float rv = r.Vdot(v);
 				//printf("rv: %f\n",rv);
 				Color kdcolor = (color * ln * sphere.kd).max0();
-				Color kscolor = ((color * max(pow(abs(rv),p),zero)) * ks).asv();
+				Color kscolor = ((color * max(pow(rv,p),zero)) * ks).asv();
 				//printf("kscolor: %f, %f, %f\n",kscolor.r, kscolor.g, kscolor.b);
 				KS = KS + kscolor;
 				KD = KD + kdcolor;
@@ -289,6 +289,7 @@ public:
 		Vector re = reflection(ray.getDir(), n).Vnor();
 		Ray reflect = Ray(point, re, 0.1);
 		Color KR = trace(reflect, recurse-1) * kr; //the recursive call
+		//printf("KR: %f, %f, %f\n", KR.r, KR.g, KR.b);
 		Color result = KA + KS + KD + KR;
 		return result;
 	}
