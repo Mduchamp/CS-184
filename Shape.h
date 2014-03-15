@@ -165,12 +165,12 @@ public:
 		p3 = Vector(p3.getCoors()[0]*x, p3.getCoors()[1]*y, p3.getCoors()[2]*z);
 	}
 
-	void rotationx(int t)
+/*	void rotationx(int t)
 	{
 		p1 = Vector(p1.getCoors()[0]*x, p1.getCoors()[1]*y, p1.getCoors()[2]*z);
 		p2 = Vector(p2.getCoors()[0]*x, p2.getCoors()[1]*y, p2.getCoors()[2]*z);
 		p3 = Vector(p3.getCoors()[0]*x, p3.getCoors()[1]*y, p3.getCoors()[2]*z);
-	}
+	}*/
 
 
 
