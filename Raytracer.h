@@ -206,7 +206,7 @@ public:
 		Vector* I = (Vector *) malloc(2*sizeof(Vector));
 		bool hit = false;
 		bool type = true;
-		float t;
+		float t = -1;
 		Sphere closes = Sphere(Vector(1,1,1), 1);
 		int length = spheres.getLength();
 		float mint = ray.getT()[1] + 1;
@@ -304,23 +304,26 @@ public:
 		Vector v = ray.getDir().Vsca(-1);
 		for(int i = 0; i < num; i++) {
 			Light light = lights.get(i);
+			Color color = light.color;
+			Color kacolor = (color * ka).max0();
+			KA = KA + kacolor;
 			if(!shadowpounce(point, light)) {
 				Vector l = light.lightVector(point);
-				Vector r = reflection(l, n);
+				Vector r = reflection(l, n).Vnor();
 				float ln = l.Vdot(n);
 				float rv = r.Vdot(v);
-				Color color = light.color;
-				Color kdcolor = color * ln * triangle.kd;
-				Color kscolor = color * pow(rv,p) * ks;
-				Color kacolor = color * ka;
-				KA = KA + kacolor;
+				//printf("rv: %f\n",rv);
+				Color kdcolor = (color * ln * triangle.kd).max0();
+				Color kscolor = ((color * max(pow(rv,p),zero)) * ks).asv();
+				//printf("kscolor: %f, %f, %f\n",kscolor.r, kscolor.g, kscolor.b);
 				KS = KS + kscolor;
 				KD = KD + kdcolor;
 			}
 		}
-		Vector re = reflection(ray.getDir(), n);
+		Vector re = reflection(ray.getDir(), n).Vnor();
 		Ray reflect = Ray(point, re, 0.1);
 		Color KR = trace(reflect, recurse-1) * kr; //the recursive call
+		//printf("KR: %f, %f, %f\n", KR.r, KR.g, KR.b);
 		Color result = KA + KS + KD + KR;
 		return result;
 	}
@@ -338,13 +341,13 @@ public:
 				return true;
 			}
 		}
-		num = triangles.getLength();
+		/*num = triangles.getLength();
 		for(int i = 0; i < num; i++) {
 			Triangle y = triangles.get(i);
 			if(y.hit(shadowray, &t)) {
 				return true;
 			}
-		}
+		}*/
 		return false;
 	}
 
