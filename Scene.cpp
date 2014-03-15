@@ -3,12 +3,14 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <string>
 using namespace std;
 
 float width = 700, height = 700;
 Vector UL, UR, LL, LR;
 Raytracer raytracer;
-/*Triangle c1 = Triangle(Vector (0, 1, 3), Vector(0, 0, 3), Vector(1, 1, 3), Color(0, 0, 1));
+Triangle c1 = Triangle(Vector (0, 1, 3), Vector(0, 0, 3), Vector(1, 1, 3), Color(0, 0, 1));
 Triangle c2 = Triangle(Vector(0, 0, 3), Vector (1, 0, 3), Vector(1, 1, 3), Color(0, 0, 1));
 Triangle c3 = Triangle(Vector (0, 1, 2), Vector(0, 0, 2), Vector(1, 1, 2), Color(0, 1, 0));
 Triangle c4 = Triangle(Vector(0, 0, 2), Vector (1, 0, 2), Vector(1, 1, 2), Color(0, 1, 0));
@@ -16,8 +18,9 @@ Triangle c4 = Triangle(Vector(0, 0, 2), Vector (1, 0, 2), Vector(1, 1, 2), Color
 Triangle t1 = Triangle (Vector (0, 1, 3.3), Vector(1, 0, 3.3), Vector(-1, 0, 3.3), Color(0, 0, 1));
 Triangle t2 = Triangle (Vector (0, 1.6, 3), Vector(1, 0.8, 3), Vector(-1, 0.8, 3), Color(0, 1, 0));
 Triangle t3 = Triangle (Vector (0, 0.5, 2.8), Vector(1, -0.5, 2.8), Vector(-1, -0.5, 2.8), Color(1, 0, 0));
-Triangle triangles[3] = {t1, t2, t3};
-Light light = Light(0.5, 0.5, 0.5, 0.5, 0.5, 0.5,false);*/
+//Triangle triangles[3] = {t1, t2, t3};
+Triangle triangles[1] = {t1};
+Light light = Light(0.5, 0.5, 0.5, 0.5, 0.5, 0.5,false);
 //std::vector <Triangle> triangles;
 //triangles.push_back(t1);
 
@@ -85,6 +88,9 @@ bool intersect_search(Ray ray, Triangle* trig, int nTriangles, PoI* poi)
 	for (count = 0; count < nTriangles; count ++)
 	{
 		Triangle t = trig[count];
+		//t.scale(2, 1, 1); //scale by x-axis by 2
+		
+
 		bool hit = t.hit(ray, &t_hit);
 		if (hit && t_hit < min_hit)
 		{
@@ -109,6 +115,62 @@ bool intersect_search(Ray ray, Triangle* trig, int nTriangles, PoI* poi)
 	return false;
 }
 
+void readObj()
+{
+	string line, temp;
+	float int1, int2, int3;
+	int tri1, tri2, tri3, nor;
+	std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
+	std::vector< Vector > temp_vertices;
+	std::vector< Triangle > temp_triangles;
+	std::vector< Vector > temp_normals;
+
+	ifstream myfile2 ("obj/triangle.obj");
+  	//copied basics from http://stackoverflow.com/questions/4263837/what-is-the-content-of-obj-file
+  	if (myfile2.is_open())
+  	{
+    	while (!myfile2.eof() )
+    	{
+      		getline (myfile2,line);
+      		if (line[0] == 118 && line[1] == 32){
+      			temp = line.substr(2,6);
+      			int1 = atof(temp.c_str());
+      			temp = line.substr(7,11);
+      			int2 = atof(temp.c_str());
+      			temp = line.substr(12,16);
+      			int3 = atof(temp.c_str());
+				Vector myV = Vector(int1, int2, int3);
+				temp_vertices.push_back(myV);
+      		}
+      		else if (line[0] == 118 && line[1] == 110){
+      			temp = line.substr(3,7);
+      			int1 = atof(temp.c_str());
+      			temp = line.substr(8,12);
+      			int2 = atof(temp.c_str());
+      			temp = line.substr(13,17);
+      			int3 = atof(temp.c_str());
+      			Vector myV = Vector(int1, int2, int3);
+				temp_normals.push_back(myV);
+      		}
+      		else if (line[0] == 102 && line[1] == 32){
+      			temp = line.substr(2,4);
+      			tri1 = atof(temp.c_str());
+      			temp = line.substr(8,10);
+      			tri2 = atof(temp.c_str());
+      			temp = line.substr(14,16);
+      			tri3 = atof(temp.c_str());
+      			temp = line.substr(6,8);
+      			nor = atof(temp.c_str());
+      			Triangle myT = Triangle(temp_vertices[tri1], temp_vertices[tri2], temp_vertices[tri3]);
+      			myT.setNormal(temp_normals[nor]);
+      			temp_triangles.push_back(myT);
+      		}
+    	}
+    	myfile2.close();
+  	}
+	else cout << "Unable to open file"; 
+}
+
 
 int main(int argc, char** argv)
 {
@@ -123,14 +185,24 @@ int main(int argc, char** argv)
 	LR  = Vector( 1, -1, 1);
 	LL  = Vector(-1, -1, 1);
 	Image screen = Image(width, height);
-	Sphere sphere = Sphere(Vector(0, 0, 10), 3, Color(1,0,0));
-	raytracer.registerShape(sphere);
-	Sphere sphere2 = Sphere(Vector(5, 0, 11), 1, Color(0,1,0));
-	raytracer.registerShape(sphere2);
+	//Sphere sphere = Sphere(Vector(0, 0, 10), 3, Color(1,0,0));
+	//raytracer.registerShape(sphere);
+	//Sphere sphere2 = Sphere(Vector(5, 0, 11), 1, Color(0,1,0));
+	//raytracer.registerShape(sphere2);	
+	//Sphere sphere = Sphere(Vector(0, 0, 10), 3, Color(1,0,0));
+	//raytracer.registerShape(sphere);
+	Triangle c1 = Triangle(Vector (-5, -5, 10), Vector(-5, 5, 10), Vector(5, 5, 10), Color(1, 1, 1));
+	raytracer.registerShape(c1);
+	
+	//Sphere sphere2 = Sphere(Vector(5, 0, 6), 1, Color(0,1,0));
+	//raytracer.registerShape(sphere2);
+	Light light = Light(0,0,0,1,1,0);
+	raytracer.registerLight(light);
+
 	//Triangle triangle = Triangle (Vector (0, 1, 3), Vector(1, 0, 3), Vector(-1, 0, 3));
 	//raytracer.registerShape(triangle);
-	Light light = Light(-3,0,1,1,1,1);
-	raytracer.registerLight(light);
+	//Light light = Light(-5,0,1,1,1,1);
+	//raytracer.registerLight(light);
 
 	for(float k = 0; k < height; k++) {
 		for(float i = 0; i < width; i++) {
@@ -138,16 +210,16 @@ int main(int argc, char** argv)
 			float v = (k + zpf) / height;
 			Vector dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
 			Ray ray = Ray(cam.eye, dir);
-			//PoI poi = PoI();
-			//bool gotHit = intersect_search(ray, triangles, 3, &poi);
 
-/*
-			PoI intersect = PoI(Vector(0,0,0), Vector(0,0,0));
-			bool gotHit = triangle.hit(ray, &intersect);
-			gotHit = gotHit || sphere.hit(ray, &intersect);*/
+			PoI poi = PoI();
+			bool gotHit = intersect_search(ray, triangles, 1, &poi);
+
+			//PoI intersect = PoI(Vector(0,0,0), Vector(0,0,0));
+			//bool gotHit = triangle.hit(ray, &intersect);
+			//gotHit = gotHit || sphere.hit(ray, &intersect);
 
 			Color color1 = raytracer.trace(ray, 1);
-
+/*
 			u = (i + 2*zpt) / width;
 			v = (k + zpt) / height;
 			dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
@@ -194,8 +266,8 @@ int main(int argc, char** argv)
 			v = (k + 3*zpt) / height;
 			dir = ((UR.Vsca(v)).Vadd(UL.Vsca(1-v)).Vsca(u)).Vadd((LR.Vsca(v)).Vadd(LL.Vsca(1-v)).Vsca(1-u)).Vsub(cam.eye).Vnor();
 			ray = Ray(cam.eye, dir);
-			Color color9 = raytracer.trace(ray, 1);
-			/*if (gotHit)
+			Color color9 = raytracer.trace(ray, 1);*/
+			if (gotHit)
 			{
 				color = poi.getColor();
 				//Ray shadow_ray. origin = poi.coliision, dir -> to light <<<<<<<<---- thingies for shadows
@@ -208,8 +280,8 @@ int main(int argc, char** argv)
 			else
 			{
 				color = Color(0, 0, 0);
-			}*/
-			color = VtoC((CtoV(color1).Vadd(CtoV(color2)).Vadd(CtoV(color3)).Vadd(CtoV(color4)).Vadd(CtoV(color5)).Vadd(CtoV(color6)).Vadd(CtoV(color7)).Vadd(CtoV(color8)).Vadd(CtoV(color9))).Vdiv(9));
+			}
+			//color = VtoC((CtoV(color1).Vadd(CtoV(color2)).Vadd(CtoV(color3)).Vadd(CtoV(color4)).Vadd(CtoV(color5)).Vadd(CtoV(color6)).Vadd(CtoV(color7)).Vadd(CtoV(color8)).Vadd(CtoV(color9))).Vdiv(9));
 			if(!screen.setPixel(k, i, color)) {
 				printf("There was a problem!\n");
 			}

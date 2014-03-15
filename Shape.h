@@ -148,6 +148,7 @@ public:
 class Triangle// : public Shape
 {
 	Vector p1, p2, p3;
+	Vector nor;
 public:
 	Color kd;
 	Triangle(Vector vertex1, Vector vertex2, Vector vertex3, Color _kd = Color(0.5, 0.5, 0.5)) {
@@ -156,6 +157,28 @@ public:
 		p2 = vertex2;
 		p3 = vertex3;
 	}
+
+	void scale(int x, int y, int z)
+	{
+		p1 = Vector(p1.getCoors()[0]*x, p1.getCoors()[1]*y, p1.getCoors()[2]*z);
+		p2 = Vector(p2.getCoors()[0]*x, p2.getCoors()[1]*y, p2.getCoors()[2]*z);
+		p3 = Vector(p3.getCoors()[0]*x, p3.getCoors()[1]*y, p3.getCoors()[2]*z);
+	}
+
+	void rotationx(int t)
+	{
+		p1 = Vector(p1.getCoors()[0]*x, p1.getCoors()[1]*y, p1.getCoors()[2]*z);
+		p2 = Vector(p2.getCoors()[0]*x, p2.getCoors()[1]*y, p2.getCoors()[2]*z);
+		p3 = Vector(p3.getCoors()[0]*x, p3.getCoors()[1]*y, p3.getCoors()[2]*z);
+	}
+
+
+
+	void setNormal(Vector nooo)
+	{
+		nor = nooo;
+	}
+
 	//function assumes that it's a valid coordinate
 	Vector getNormal(Vector intercept = Vector(0, 0, 0))
 	{

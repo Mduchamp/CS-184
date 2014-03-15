@@ -278,9 +278,11 @@ public:
 				Vector r = reflection(l, n).Vnor();
 				float ln = l.Vdot(n);
 				float rv = r.Vdot(v);
+				rv = max(rv, 0);
 				//printf("rv: %f\n",rv);
 				Color kdcolor = (color * ln * sphere.kd).max0();
-				Color kscolor = ((color * max(pow(rv,p),zero)) * ks).asv();
+				Color kscolor = (color * pow(rv,p) * ks);
+				
 				//printf("kscolor: %f, %f, %f\n",kscolor.r, kscolor.g, kscolor.b);
 				KS = KS + kscolor;
 				KD = KD + kdcolor;
@@ -332,6 +334,7 @@ public:
 		Ray shadowray = Ray(light.getPosition(), shadow, 0, dist-1);
 		float t  = -1;
 		int num = spheres.getLength();
+		//std::cout << num;
 		for(int i = 0; i < num; i++) {
 			Sphere x = spheres.get(i);
 			if(x.hit(shadowray, &t)) {
